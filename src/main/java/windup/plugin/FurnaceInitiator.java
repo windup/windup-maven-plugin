@@ -125,9 +125,13 @@ public class FurnaceInitiator {
 //                Files.createDirectories(windupHomeIgnoreDir);
 //            }
 //            windupConfiguration.addDefaultUserIgnorePath(windupHomeIgnoreDir);
-
-            windupConfiguration.setOptionValue("packages", "org.apache");
-            windupConfiguration.setOutputDirectory(Paths.get("/Users/samueltauil/Development/windup/windup-maven-plugin/target/"));
+//            processorConfig.setOptionValue(ScanPackagesOption.NAME, Collections.singletonList(""));
+            List<String> packages = new ArrayList<>();
+            packages.add("org.apache");
+            packages.add("com.acme");
+            windupConfiguration.setOptionValue("packages", packages);
+            windupConfiguration.setOutputDirectory(Paths.get("/Users/samueltauil/Desktop/repository/"));
+            windupConfiguration.setInputPath(Paths.get("/Users/samueltauil/Development/windup/jee-example-app-1.0.0.ear"));
             FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
 
             Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
