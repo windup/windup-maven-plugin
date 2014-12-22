@@ -20,7 +20,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.*;
-import org.jboss.forge.addon.ui.input.InputComponent;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -33,20 +32,16 @@ import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
 import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.se.FurnaceFactory;
-import org.jboss.forge.furnace.util.OperatingSystemUtils;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
-import org.jboss.windup.config.WindupConfigurationOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
-import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
 import org.jboss.windup.util.WindupPathUtil;
 import org.jboss.windup.util.exception.WindupException;
 
-import javax.inject.Inject;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -57,6 +52,9 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+/*
+@author <a href="mailto:samueltauil@gmail.com">Samuel Tauil</a>
+ */
 @Mojo( name = "windup", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator=true)
 @Execute(phase=LifecyclePhase.GENERATE_SOURCES)
 public class WindupMojo extends AbstractMojo {
