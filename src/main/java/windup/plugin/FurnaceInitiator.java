@@ -133,6 +133,7 @@ public class FurnaceInitiator {
             Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
 //            windupConfiguration.getGraphContext().getGraph();
             GraphContextFactory graphContextFactory = addonRegistry.getServices(GraphContextFactory.class).get();
+
             System.out.println(graphContextFactory);
 
             try (GraphContext graphContext = graphContextFactory.create(graphPath)) {
