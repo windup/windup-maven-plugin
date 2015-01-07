@@ -28,4 +28,6 @@ mvn clean install
 
 == Procedure to use the plugin
 
-TBD
+An example showing how to use the plugin can be found https://github.com/windup/windup-maven-plugin/blob/master/src/it/simple-it/pom.xml[here].
+
+More examples will be provided as well the list of all atributes that can be used by the plugin.
