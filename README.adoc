@@ -1,0 +1,31 @@
+=  Windup 2.0 Maven Plugin
+
+== Overview
+
+Windup Maven plugin is created collaboratively on the Windup project.
+This `windup-maven-plugin` repository takes the implementation of the plugin, this repository will contain the source for the official Maven plugin when the Windup 2.0 ships.
+
+== Procedure to build the plugin 
+    
+* The first time, you must fork and clone the windup-maven-plugin GitHub repository. After that, just fetch the latest upstream.
++
+----
+git clone https://github.com/windup/windup-maven-plugin.git
+git fetch upstream
+----
+    
+* Navigate to the local windup-maven-plugin directory.
++
+----
+cd windup-maven-plugin
+----
+
+* Build the project.
++
+----
+mvn clean install
+----
+
+== Procedure to use the plugin
+
+TBD
