@@ -11,8 +11,8 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <windup.version>2.0.0.Beta5</windup.version>
-      <furnace.version>2.12.1.Final</furnace.version>
+      <windup.version>2.0.0-SNAPSHOT</windup.version>
+      <forge.version>2.12.1.Final</forge.version>
   </properties>
 
   <build>
@@ -22,12 +22,17 @@
         <artifactId>windup-maven-plugin</artifactId>
         <version>1.0-SNAPSHOT</version>
           <configuration>
+
               <packages>
                   <package>org.apache</package>
                   <package>com.acme</package>
               </packages>
-               <inputDirectory>/Users/samueltauil/Development/windup/jee-example-app-1.0.0.ear</inputDirectory>
-               <outputDirectory>${project.build.directory}/windup-report</outputDirectory>
+              <inputDirectory>/Users/samueltauil/Development/windup/jee-example-app-1.0.0.ear</inputDirectory>
+              <outputDirectory>${project.build.directory}/windup-report</outputDirectory>
+              <offlineMode>false</offlineMode>
+              <overwrite>false</overwrite>
+              <windupVersion>${windup.version}</windupVersion>
+              <forgeVersion>${forge.version}</forgeVersion>
           </configuration>
       </plugin>
 

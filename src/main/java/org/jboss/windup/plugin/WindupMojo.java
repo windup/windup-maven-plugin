@@ -46,7 +46,7 @@ import java.util.concurrent.Future;
 /*
 @author <a href="mailto:samueltauil@gmail.com">Samuel Tauil</a>
  */
-@Mojo( name = "windup", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator=true)
+@Mojo( name = "windup", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator=true )
 @Execute(phase=LifecyclePhase.GENERATE_SOURCES)
 public class WindupMojo extends AbstractMojo {
 
@@ -65,11 +65,28 @@ public class WindupMojo extends AbstractMojo {
     /**
      * Packages to be inspected by Windup.
      */
-    @Parameter( property = "packages", required = true)
+    @Parameter( property = "packages", required = true )
     private List<String> packages;
 
-    public static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
+    @Parameter( property = "offline", required = false )
+    private Boolean offlineMode;
 
+    @Parameter( property = "overwrite", required = false )
+    private Boolean overwrite;
+
+    @Parameter( property = "userIgnorePath", required = false )
+    private String userIgnorePath;
+
+    @Parameter( property = "userRulesDirectory", required = false )
+    private String userRulesDirectory;
+
+    @Parameter( property = "windupVersion", required = true )
+    private String windupVersion;
+
+    @Parameter( property = "forgeVersion", required = true )
+    private String forgeVersion;
+
+    public static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
 
 
     public void execute() throws MojoExecutionException {
@@ -78,53 +95,37 @@ public class WindupMojo extends AbstractMojo {
         windupConfiguration.setOptionValue("packages", packages);
         windupConfiguration.setInputPath(Paths.get(inputDirectory));
         windupConfiguration.setOutputDirectory(Paths.get(outputDirectory));
+        windupConfiguration.setOffline(offlineMode);
+        windupConfiguration.setOptionValue("overwrite", overwrite);
 
+        if  (userRulesDirectory == null) {
+            userRulesDirectory = WindupPathUtil.getWindupUserRulesDir().toString();
+        }
 
-
-        java.nio.file.Path userRulesDir = WindupPathUtil.getWindupUserRulesDir();
-        if (userRulesDir != null && !Files.isDirectory(userRulesDir))
+        if (userRulesDirectory != null && !Files.isDirectory(Paths.get(userRulesDirectory)))
         {
             try {
-                Files.createDirectories(userRulesDir);
+                Files.createDirectories(Paths.get(userRulesDirectory));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        windupConfiguration.addDefaultUserRulesDirectory(userRulesDir);
+        windupConfiguration.addDefaultUserRulesDirectory(Paths.get(userRulesDirectory));
 
-        Path userIgnoreDir = WindupPathUtil.getWindupIgnoreListDir();
-        if (userIgnoreDir != null && !Files.isDirectory(userIgnoreDir))
+
+        if  (userIgnorePath == null) {
+            userIgnorePath = WindupPathUtil.getWindupIgnoreListDir().toString();
+        }
+
+        if (userIgnorePath != null && !Files.isDirectory(Paths.get(userIgnorePath)))
         {
             try {
-                Files.createDirectories(userIgnoreDir);
+                Files.createDirectories(Paths.get(userIgnorePath));
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        windupConfiguration.addDefaultUserIgnorePath(userIgnoreDir);
-
-//        Path windupHomeRulesDir = WindupPathUtil.getWindupHomeRules();
-//        if (windupHomeRulesDir != null && !Files.isDirectory(windupHomeRulesDir))
-//        {
-//            try {
-//                Files.createDirectories(windupHomeRulesDir);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        windupConfiguration.addDefaultUserRulesDirectory(windupHomeRulesDir);
-//
-//        Path windupHomeIgnoreDir = WindupPathUtil.getWindupHomeIgnoreListDir();
-//        if (windupHomeIgnoreDir != null && !Files.isDirectory(windupHomeIgnoreDir))
-//        {
-//            try {
-//                Files.createDirectories(windupHomeIgnoreDir);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        windupConfiguration.addDefaultUserIgnorePath(windupHomeIgnoreDir);
-
+        windupConfiguration.addDefaultUserIgnorePath(Paths.get(userIgnorePath));
 
         FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
@@ -133,10 +134,10 @@ public class WindupMojo extends AbstractMojo {
         try {
             start(true, true, furnace);
             System.setProperty("INTERACTIVE", "true");
-            install("org.jboss.forge.addon:core,2.12.1.Final", true, furnace);
-            install("org.jboss.windup:ui,2.0.0.Beta5", true, furnace);
-            install("org.jboss.windup.rules.apps:rules-java,2.0.0.Beta5", true, furnace);
-            install("org.jboss.windup.rules.apps:rules-java-ee,2.0.0.Beta5", true, furnace);
+            install("org.jboss.forge.addon:core,"+forgeVersion, true, furnace);
+            install("org.jboss.windup:ui,"+windupVersion, true, furnace);
+            install("org.jboss.windup.rules.apps:rules-java,"+windupVersion, true, furnace);
+            install("org.jboss.windup.rules.apps:rules-java-ee,"+windupVersion, true, furnace);
 
             AddonRegistry addonRegistry = furnace.getAddonRegistry();
             WindupProcessor windupProcessor = addonRegistry.getServices(WindupProcessor.class).get();
