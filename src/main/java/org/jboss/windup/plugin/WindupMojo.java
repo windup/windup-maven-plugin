@@ -133,7 +133,7 @@ public class WindupMojo extends AbstractMojo {
         Furnace furnace = getFurnace();
         try {
             start(true, true, furnace);
-            System.setProperty("INTERACTIVE", "true");
+            
             install("org.jboss.forge.addon:core,"+forgeVersion, true, furnace);
             install("org.jboss.windup:ui,"+windupVersion, true, furnace);
             install("org.jboss.windup.rules.apps:rules-java,"+windupVersion, true, furnace);
