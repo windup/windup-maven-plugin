@@ -5,13 +5,16 @@
 Windup Maven plugin is created collaboratively on the Windup project.
 This `windup-maven-plugin` repository takes the implementation of the plugin, this repository will contain the source for the official Maven plugin when the Windup 2.0 ships.
 
+== Prerequisites
+
+To run properly Windup relies on Maven version lower than 3.2.5, so we recommend to use version 3.2.3.
+
 == Procedure to build the plugin 
     
-* The first time, you must fork and clone the windup-maven-plugin GitHub repository. After that, just fetch the latest upstream.
+* The first time, you must clone the windup-maven-plugin GitHub repository. 
 +
 ----
 git clone https://github.com/windup/windup-maven-plugin.git
-git fetch upstream
 ----
     
 * Navigate to the local windup-maven-plugin directory.
@@ -31,3 +34,6 @@ mvn clean install
 An example showing how to use the plugin can be found https://github.com/windup/windup-maven-plugin/blob/master/src/it/simple-it/pom.xml[here].
 
 More examples will be provided as well the list of all atributes that can be used by the plugin.
+
+
+
