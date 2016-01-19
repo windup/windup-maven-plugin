@@ -14,9 +14,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <windup.version>2.0.0.Beta5</windup.version>
+    <windup.version>2.4.1.Final</windup.version>
     <junit.version>4.8.2</junit.version>
-    <forge.version>2.12.1.Final</forge.version>
+    <forge.version>2.20.1.Final</forge.version>
     <maven.compiler.target>1.7</maven.compiler.target>
     <maven.compiler.source>1.7</maven.compiler.source>
   </properties>
@@ -69,7 +69,7 @@
       <dependency>
           <groupId>org.jboss.windup</groupId>
           <artifactId>windup-parent</artifactId>
-          <version>2.0.0-SNAPSHOT</version>
+          <version>${windup.version}</version>
           <type>pom</type>
       </dependency>
 
@@ -122,13 +122,13 @@
           <version>${windup.version}</version>
       </dependency>
       <dependency>
-          <groupId>org.jboss.windup</groupId>
-          <artifactId>ui</artifactId>
+          <groupId>org.jboss.windup.ui</groupId>
+          <artifactId>windup-ui</artifactId>
           <version>${windup.version}</version>
       </dependency>
       <dependency>
           <groupId>org.jboss.windup.utils</groupId>
-          <artifactId>utils</artifactId>
+          <artifactId>windup-utils</artifactId>
           <version>${windup.version}</version>
       </dependency>
 
@@ -145,7 +145,7 @@
       <dependency>
           <groupId>org.jboss.windup.exec</groupId>
           <artifactId>windup-exec-api</artifactId>
-          <version>2.0.0-SNAPSHOT</version>
+          <version>${windup.version}</version>
       </dependency>
       <dependency>
           <groupId>org.jboss.forge.furnace</groupId>
@@ -155,7 +155,7 @@
       <dependency>
           <groupId>org.jboss.windup</groupId>
           <artifactId>windup-bootstrap</artifactId>
-          <version>2.0.0-SNAPSHOT</version>
+          <version>${windup.version}</version>
       </dependency>
 
 
@@ -213,12 +213,14 @@
               <goal>descriptor</goal>
             </goals>
           </execution>
+          <!-- 
           <execution>
             <id>help-goal</id>
             <goals>
               <goal>helpmojo</goal>
             </goals>
           </execution>
+          -->
         </executions>
       </plugin>
     </plugins>
