@@ -7,10 +7,24 @@
 
 package org.jboss.windup.plugin;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugins.annotations.*;
+import org.apache.maven.plugins.annotations.Execute;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.jboss.forge.addon.ui.result.Results;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -30,18 +44,8 @@ import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
-import org.jboss.windup.util.WindupPathUtil;
+import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.exception.WindupException;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 
 /*
 @author <a href="mailto:samueltauil@gmail.com">Samuel Tauil</a>
@@ -93,13 +97,17 @@ public class WindupMojo extends AbstractMojo {
 
         WindupConfiguration windupConfiguration = new WindupConfiguration();
         windupConfiguration.setOptionValue("packages", packages);
-        windupConfiguration.setInputPath(Paths.get(inputDirectory));
+        // RM: Commented by upgrade to WindUp latest version
+        //windupConfiguration.setInputPath(Paths.get(inputDirectory));
+        windupConfiguration.addInputPath(Paths.get(inputDirectory));
         windupConfiguration.setOutputDirectory(Paths.get(outputDirectory));
         windupConfiguration.setOffline(offlineMode);
         windupConfiguration.setOptionValue("overwrite", overwrite);
 
         if  (userRulesDirectory == null) {
-            userRulesDirectory = WindupPathUtil.getWindupUserRulesDir().toString();
+        	// RM: Modify by upgrade to WindUp latest version
+        	// userRulesDirectory = WindupPathUtil.getWindupUserRulesDir().toString();
+        	userRulesDirectory = PathUtil.getWindupRulesDir().toString();
         }
 
         if (userRulesDirectory != null && !Files.isDirectory(Paths.get(userRulesDirectory)))
@@ -114,7 +122,9 @@ public class WindupMojo extends AbstractMojo {
 
 
         if  (userIgnorePath == null) {
-            userIgnorePath = WindupPathUtil.getWindupIgnoreListDir().toString();
+            // RM: Modify by upgrade to WindUp latest version
+        	// userIgnorePath = WindupPathUtil.getWindupIgnoreListDir().toString();
+        	userIgnorePath = PathUtil.getWindupIgnoreDir().toString();
         }
 
         if (userIgnorePath != null && !Files.isDirectory(Paths.get(userIgnorePath)))
@@ -135,9 +145,9 @@ public class WindupMojo extends AbstractMojo {
             start(true, true, furnace);
             
             install("org.jboss.forge.addon:core,"+forgeVersion, true, furnace);
-            install("org.jboss.windup:ui,"+windupVersion, true, furnace);
-            install("org.jboss.windup.rules.apps:rules-java,"+windupVersion, true, furnace);
-            install("org.jboss.windup.rules.apps:rules-java-ee,"+windupVersion, true, furnace);
+            install("org.jboss.windup.ui:windup-ui,"+windupVersion, true, furnace);
+            install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
+            install("org.jboss.windup.rules.apps:windup-rules-java-ee,"+windupVersion, true, furnace);
 
             AddonRegistry addonRegistry = furnace.getAddonRegistry();
             WindupProcessor windupProcessor = addonRegistry.getServices(WindupProcessor.class).get();
