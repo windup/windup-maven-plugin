@@ -148,6 +148,8 @@ public class WindupMojo extends AbstractMojo {
             install("org.jboss.windup.ui:windup-ui,"+windupVersion, true, furnace);
             install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
             install("org.jboss.windup.rules.apps:windup-rules-java-ee,"+windupVersion, true, furnace);
+//            install("org.jboss.forge.furnace.container:simple,"+forgeVersion, true, furnace);
+            
 
             AddonRegistry addonRegistry = furnace.getAddonRegistry();
             WindupProcessor windupProcessor = addonRegistry.getServices(WindupProcessor.class).get();
@@ -278,7 +280,7 @@ public class WindupMojo extends AbstractMojo {
                     {
                         String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
                         if (apiVersion != null
-                                && Versions.isApiCompatible(runtimeAPIVersion, new SingleVersion(apiVersion)))
+                                && Versions.isApiCompatible(runtimeAPIVersion, SingleVersion.valueOf(apiVersion)))
                         {
                             selected = versions[i];
                         }

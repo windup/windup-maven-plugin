@@ -14,21 +14,22 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <windup.version>2.4.1.Final</windup.version>
+    <windup.version>2.5.0-SNAPSHOT</windup.version>
     <junit.version>4.8.2</junit.version>
     <forge.version>2.20.1.Final</forge.version>
+    <furnace.version>2.22.10.Final</furnace.version>
     <maven.compiler.target>1.7</maven.compiler.target>
     <maven.compiler.source>1.7</maven.compiler.source>
   </properties>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.jboss.forge</groupId>
-                <artifactId>forge-bom</artifactId>
-                <version>${forge.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
+<!--             <dependency> -->
+<!--                 <groupId>org.jboss.forge</groupId> -->
+<!--                 <artifactId>forge-bom</artifactId> -->
+<!--                 <version>${forge.version}</version> -->
+<!--                 <type>pom</type> -->
+<!--                 <scope>import</scope> -->
+<!--             </dependency> -->
         </dependencies>
     </dependencyManagement>
   <dependencies>
@@ -66,12 +67,12 @@
           <version>1.7.7</version>
       </dependency>
 
-      <dependency>
-          <groupId>org.jboss.windup</groupId>
-          <artifactId>windup-parent</artifactId>
-          <version>${windup.version}</version>
-          <type>pom</type>
-      </dependency>
+<!--       <dependency> -->
+<!--           <groupId>org.jboss.windup</groupId> -->
+<!--           <artifactId>windup-parent</artifactId> -->
+<!--           <version>${windup.version}</version> -->
+<!--           <type>pom</type> -->
+<!--       </dependency> -->
 
       <dependency>
       <groupId>org.apache.maven</groupId>
@@ -150,7 +151,7 @@
       <dependency>
           <groupId>org.jboss.forge.furnace</groupId>
           <artifactId>furnace-se</artifactId>
-          <version>${forge.version}</version>
+          <version>${furnace.version}</version>
       </dependency>
       <dependency>
           <groupId>org.jboss.windup</groupId>
@@ -180,17 +181,25 @@
       <dependency>
           <groupId>org.jboss.forge.furnace.container</groupId>
           <artifactId>cdi-api</artifactId>
-          <version>${forge.version}</version>
+          <version>${furnace.version}</version>
       </dependency>
       <dependency>
           <groupId>org.jboss.forge.addon</groupId>
           <artifactId>facets-api</artifactId>
+          <version>${forge.version}</version>
           <scope>provided</scope>
       </dependency>
       <dependency>
           <groupId>org.jboss.forge.addon</groupId>
           <artifactId>ui-spi</artifactId>
           <classifier>forge-addon</classifier>
+          <version>${forge.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>simple</artifactId>
+          <classifier>forge-addon</classifier>
+          <version>${furnace.version}</version>
       </dependency>
 
 
