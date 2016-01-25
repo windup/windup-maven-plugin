@@ -101,7 +101,9 @@ public class WindupMojo extends AbstractMojo {
         //windupConfiguration.setInputPath(Paths.get(inputDirectory));
         windupConfiguration.addInputPath(Paths.get(inputDirectory));
         windupConfiguration.setOutputDirectory(Paths.get(outputDirectory));
-        windupConfiguration.setOffline(offlineMode);
+
+        windupConfiguration.setOffline(offlineMode == Boolean.TRUE);
+
         windupConfiguration.setOptionValue("overwrite", overwrite);
 
         if  (userRulesDirectory == null) {
@@ -143,13 +145,21 @@ public class WindupMojo extends AbstractMojo {
         Furnace furnace = getFurnace();
         try {
             start(true, true, furnace);
-            
+
             install("org.jboss.forge.addon:core,"+forgeVersion, true, furnace);
+            //install("org.jboss.forge.addon:furnace,"+forgeVersion, true, furnace);
+            install("org.jboss.forge.furnace.container:cdi,"+forgeVersion, true, furnace);
+            install("org.jboss.forge.addon:convert,"+forgeVersion, true, furnace);
+            install("org.jboss.forge.addon:shell,"+forgeVersion, true, furnace);
+            install("org.jboss.windup.tooling:windup-tooling,"+windupVersion, true, furnace);
+            install("org.jboss.windup.exec:windup-exec,"+windupVersion, true, furnace);
+            install("org.jboss.windup.utils:windup-utils,"+windupVersion, true, furnace);
             install("org.jboss.windup.ui:windup-ui,"+windupVersion, true, furnace);
+            install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
             install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
             install("org.jboss.windup.rules.apps:windup-rules-java-ee,"+windupVersion, true, furnace);
 //            install("org.jboss.forge.furnace.container:simple,"+forgeVersion, true, furnace);
-            
+
 
             AddonRegistry addonRegistry = furnace.getAddonRegistry();
             WindupProcessor windupProcessor = addonRegistry.getServices(WindupProcessor.class).get();

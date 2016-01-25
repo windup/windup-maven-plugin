@@ -1,277 +1,289 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.jboss.windup.plugin</groupId>
-  <artifactId>windup-maven-plugin</artifactId>
-  <version>1.0-SNAPSHOT</version>
-  <packaging>maven-plugin</packaging>
+    <groupId>org.jboss.windup.plugin</groupId>
+    <artifactId>windup-maven-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>maven-plugin</packaging>
 
+    <name>Windup Maven Plugin</name>
 
-  <name>Windup Maven Plugin</name>
+    <url>http://windup.jboss.org</url>
 
-  <url>http://windup.jboss.org</url>
-
-  <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <windup.version>2.5.0-SNAPSHOT</windup.version>
-    <junit.version>4.8.2</junit.version>
-    <forge.version>2.20.1.Final</forge.version>
-    <furnace.version>2.22.10.Final</furnace.version>
-    <maven.compiler.target>1.7</maven.compiler.target>
-    <maven.compiler.source>1.7</maven.compiler.source>
-  </properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <windup.version>2.5.0-SNAPSHOT</windup.version>
+        <forge.version>2.20.1.Final</forge.version>
+        <furnace.version>2.22.10.Final</furnace.version>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
+    </properties>
     <dependencyManagement>
         <dependencies>
-<!--             <dependency> -->
-<!--                 <groupId>org.jboss.forge</groupId> -->
-<!--                 <artifactId>forge-bom</artifactId> -->
-<!--                 <version>${forge.version}</version> -->
-<!--                 <type>pom</type> -->
-<!--                 <scope>import</scope> -->
-<!--             </dependency> -->
+            <!--
+            <dependency>
+                <groupId>org.jboss.forge</groupId>
+                <artifactId>forge-bom</artifactId>
+                <version>${forge.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            -->
         </dependencies>
     </dependencyManagement>
-  <dependencies>
+    <dependencies>
 
-      <dependency>
-          <groupId>com.thinkaurelius.titan</groupId>
-          <artifactId>titan-all</artifactId>
-          <version>0.9.0-M1</version>
-      </dependency>
-      <dependency>
-          <groupId>com.thinkaurelius.titan</groupId>
-          <artifactId>titan-core</artifactId>
-          <version>0.9.0-M1</version>
-      </dependency>
-
-
-      <dependency>
-          <groupId>org.codehaus.groovy</groupId>
-          <artifactId>groovy-all</artifactId>
-          <version>2.1.8</version>
-      </dependency>
-      <dependency>
-          <groupId>log4j</groupId>
-          <artifactId>log4j</artifactId>
-          <version>1.2.17</version>
-      </dependency>
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>1.7.7</version>
-      </dependency>
-      <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-simple</artifactId>
-          <version>1.7.7</version>
-      </dependency>
-
-<!--       <dependency> -->
-<!--           <groupId>org.jboss.windup</groupId> -->
-<!--           <artifactId>windup-parent</artifactId> -->
-<!--           <version>${windup.version}</version> -->
-<!--           <type>pom</type> -->
-<!--       </dependency> -->
-
-      <dependency>
-      <groupId>org.apache.maven</groupId>
-      <artifactId>maven-plugin-api</artifactId>
-      <version>2.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.maven.plugin-tools</groupId>
-      <artifactId>maven-plugin-annotations</artifactId>
-      <version>3.2</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.plexus</groupId>
-      <artifactId>plexus-utils</artifactId>
-      <version>3.0.21</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>${junit.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-      <dependency>
-          <groupId>org.jboss.windup.graph</groupId>
-          <artifactId>windup-graph</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.windup.graph</groupId>
-          <artifactId>windup-graph-impl</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.windup.config</groupId>
-          <artifactId>windup-config-api</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.forge.addon</groupId>
-          <artifactId>ui-api</artifactId>
-          <version>${forge.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.windup.graph</groupId>
-          <artifactId>windup-graph-api</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.windup.ui</groupId>
-          <artifactId>windup-ui</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.windup.utils</groupId>
-          <artifactId>windup-utils</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
-
-      <dependency>
-          <groupId>org.jboss.forge.addon</groupId>
-          <artifactId>resources-api</artifactId>
-          <version>${forge.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.windup.exec</groupId>
-          <artifactId>windup-exec-impl</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.windup.exec</groupId>
-          <artifactId>windup-exec-api</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.forge.furnace</groupId>
-          <artifactId>furnace-se</artifactId>
-          <version>${furnace.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.windup</groupId>
-          <artifactId>windup-bootstrap</artifactId>
-          <version>${windup.version}</version>
-      </dependency>
+        <dependency>
+            <groupId>com.thinkaurelius.titan</groupId>
+            <artifactId>titan-all</artifactId>
+            <version>0.9.0-M2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.thinkaurelius.titan</groupId>
+            <artifactId>titan-core</artifactId>
+            <version>0.9.0-M2</version>
+        </dependency>
 
 
-      <dependency>
-          <groupId>org.jboss.weld</groupId>
-          <artifactId>weld-api</artifactId>
-          <version>2.2.Final</version>
-      </dependency>
+        <dependency>
+            <groupId>org.codehaus.groovy</groupId>
+            <artifactId>groovy-all</artifactId>
+            <version>2.2.2</version>
+        </dependency>
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>1.7.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.7.13</version>
+        </dependency>
 
-      <dependency>
-          <groupId>org.jboss.weld</groupId>
-          <artifactId>weld-core</artifactId>
-          <version>2.2.8.Final</version>
-      </dependency>
+        <!--       <dependency> -->
+        <!--           <groupId>org.jboss.windup</groupId> -->
+        <!--           <artifactId>windup-parent</artifactId> -->
+        <!--           <version>${windup.version}</version> -->
+        <!--           <type>pom</type> -->
+        <!--       </dependency> -->
 
-      <dependency>
-          <groupId>org.jboss.weld</groupId>
-          <artifactId>weld-se</artifactId>
-          <version>1.0.1-Final</version>
-      </dependency>
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-plugin-api</artifactId>
+            <version>2.0.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.maven.plugin-tools</groupId>
+            <artifactId>maven-plugin-annotations</artifactId>
+            <version>3.4</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.plexus</groupId>
+            <artifactId>plexus-utils</artifactId>
+            <version>3.0.22</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
 
-      <dependency>
-          <groupId>org.jboss.forge.furnace.container</groupId>
-          <artifactId>cdi-api</artifactId>
-          <version>${furnace.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.forge.addon</groupId>
-          <artifactId>facets-api</artifactId>
-          <version>${forge.version}</version>
-          <scope>provided</scope>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.forge.addon</groupId>
-          <artifactId>ui-spi</artifactId>
-          <classifier>forge-addon</classifier>
-          <version>${forge.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>org.jboss.forge.furnace.container</groupId>
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph-impl</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config-api</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui-api</artifactId>
+            <version>${forge.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph-api</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.ui</groupId>
+            <artifactId>windup-ui</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
+
+        <!--
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi</artifactId>
+            <version>${forge.version}</version>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
             <artifactId>simple</artifactId>
-          <classifier>forge-addon</classifier>
-          <version>${furnace.version}</version>
-      </dependency>
+            <version>${forge.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>resources-api</artifactId>
+            <version>${forge.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec-impl</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec-api</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-se</artifactId>
+            <version>${furnace.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-bootstrap</artifactId>
+            <version>${windup.version}</version>
+        </dependency>
 
 
-  </dependencies>
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-api</artifactId>
+            <version>2.2.Final</version>
+        </dependency>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-plugin-plugin</artifactId>
-        <version>3.3</version>
-        <configuration>
-          <goalPrefix>windup</goalPrefix>
-          <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-        </configuration>
-        <executions>
-          <execution>
-            <id>mojo-descriptor</id>
-            <goals>
-              <goal>descriptor</goal>
-            </goals>
-          </execution>
-          <!-- 
-          <execution>
-            <id>help-goal</id>
-            <goals>
-              <goal>helpmojo</goal>
-            </goals>
-          </execution>
-          -->
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-  <profiles>
-    <profile>
-      <id>run-its</id>
-      <build>
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-core</artifactId>
+            <version>2.2.8.Final</version>
+        </dependency>
 
+        <dependency>
+            <groupId>org.jboss.weld</groupId>
+            <artifactId>weld-se</artifactId>
+            <version>1.0.1-Final</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${furnace.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>facets-api</artifactId>
+            <version>${forge.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui-spi</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${forge.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <artifactId>simple</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${furnace.version}</version>
+        </dependency>
+
+
+    </dependencies>
+
+    <build>
         <plugins>
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-invoker-plugin</artifactId>
-            <version>1.9</version>
-            <configuration>
-              <debug>true</debug>
-              <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-              <pomIncludes>
-                <pomInclude>*/pom.xml</pomInclude>
-              </pomIncludes>
-              <postBuildHookScript>verify</postBuildHookScript>
-              <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-              <settingsFile>src/it/settings.xml</settingsFile>
-              <goals>
-                <goal>clean</goal>
-                <goal>test-compile</goal>
-              </goals>
-            </configuration>
-            <executions>
-              <execution>
-                <id>integration-test</id>
-                <goals>
-                  <goal>install</goal>
-                  <goal>integration-test</goal>
-                  <goal>verify</goal>
-                </goals>
-              </execution>
-            </executions>
-          </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-plugin-plugin</artifactId>
+                <version>3.4</version>
+                <configuration>
+                    <goalPrefix>windup</goalPrefix>
+                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>mojo-descriptor</id>
+                        <goals>
+                            <goal>descriptor</goal>
+                        </goals>
+                    </execution>
+                    <!--
+                    <execution>
+                      <id>help-goal</id>
+                      <goals>
+                        <goal>helpmojo</goal>
+                      </goals>
+                    </execution>
+                    -->
+                </executions>
+            </plugin>
         </plugins>
+    </build>
+    <profiles>
+        <profile>
+            <id>run-its</id>
+            <build>
 
-      </build>
-    </profile>
-  </profiles>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>1.10</version>
+                        <configuration>
+                            <debug>true</debug>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <pomIncludes>
+                                <pomInclude>*/pom.xml</pomInclude>
+                            </pomIncludes>
+                            <postBuildHookScript>verify</postBuildHookScript>
+                            <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                            <settingsFile>src/it/settings.xml</settingsFile>
+                            <goals>
+                                <goal>clean</goal>
+                                <goal>test-compile</goal>
+                            </goals>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+
+            </build>
+        </profile>
+    </profiles>
 </project>
