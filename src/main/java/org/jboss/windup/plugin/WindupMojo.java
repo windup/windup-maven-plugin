@@ -122,6 +122,9 @@ public class WindupMojo extends AbstractMojo
     @Parameter(property = "forgeVersion", required = true)
     private String forgeVersion;
 
+    @Parameter(property = "furnaceVersion", required = true)
+    private String furnaceVersion;
+
     public static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
     public static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets";
     public static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
@@ -172,8 +175,8 @@ public class WindupMojo extends AbstractMojo
         install("org.jboss.forge.addon:core,"+forgeVersion, true, furnace);
         //install("org.jboss.forge.addon:furnace,"+forgeVersion, true, furnace);
         //install("org.jboss.forge.furnace.container:cdi,"+forgeVersion, true, furnace);
-        install("org.jboss.forge.furnace.container:simple,"+forgeVersion, true, furnace);
-        install("org.jboss.forge.addon:convert,"+forgeVersion, true, furnace);
+        install("org.jboss.forge.furnace.container:simple,"+furnaceVersion, true, furnace);
+        //install("org.jboss.forge.addon:convert,"+forgeVersion, true, furnace);
         //install("org.jboss.forge.addon:shell,"+forgeVersion, true, furnace);
         install("org.jboss.windup:windup-tooling,"+windupVersion, true, furnace);
         install("org.jboss.windup.exec:windup-exec,"+windupVersion, true, furnace);

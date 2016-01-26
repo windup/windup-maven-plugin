@@ -135,21 +135,27 @@
             <!-- Windup switched from :cdi to :simple due to problems with Titan classloading. -->
             <artifactId>simple</artifactId>
             <classifier>forge-addon</classifier>
+            <version>2.22.10.Final</version>
         </dependency>
 
         <!-- Forge -->
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>core</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>resources</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
         <!--///
+        -->
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>ui</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
-        -->
         <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>facets</artifactId>
