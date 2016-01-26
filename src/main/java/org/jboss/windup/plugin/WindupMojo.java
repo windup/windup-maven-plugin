@@ -12,12 +12,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -30,6 +28,7 @@ import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.DefaultArtifact;
 import org.eclipse.aether.resolution.ArtifactRequest;
+import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
 import org.jboss.forge.furnace.Furnace;
 import org.jboss.forge.furnace.addons.AddonId;
@@ -40,22 +39,34 @@ import org.jboss.forge.furnace.manager.maven.MavenContainer;
 import org.jboss.forge.furnace.manager.maven.addon.MavenAddonDependencyResolver;
 import org.jboss.forge.furnace.manager.request.AddonActionRequest;
 import org.jboss.forge.furnace.manager.spi.AddonDependencyResolver;
-import org.jboss.forge.furnace.repositories.AddonRepository;
 import org.jboss.forge.furnace.repositories.AddonRepositoryMode;
 import org.jboss.forge.furnace.se.FurnaceFactory;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
+import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
+import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
+import org.jboss.windup.exec.configuration.options.ExplodedAppInputOption;
+import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
+import org.jboss.windup.exec.configuration.options.OverwriteOption;
+import org.jboss.windup.exec.configuration.options.SourceOption;
+import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
+import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
+import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesReportOption;
+import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
 
-/*
-@author <a href="mailto:samueltauil@gmail.com">Samuel Tauil</a>
+/**
+ * @author <a href="mailto:samueltauil@gmail.com">Samuel Tauil</a>
+ * @author <a href="mailto:zizka@seznam.cz">Ondrej Zizka</a>
  */
 @Mojo(name = "windup", requiresDependencyResolution = ResolutionScope.COMPILE, aggregator = true)
 @Execute(phase = LifecyclePhase.GENERATE_SOURCES)
@@ -73,7 +84,7 @@ public class WindupMojo extends AbstractMojo
     /**
      * Location of the input file application.
      */
-    @Parameter(alias = "input", property = "input", required = true)
+    @Parameter(alias="input", property = "input", required = true, defaultValue = "${project.build.sourceDirectory}" )
     private String inputDirectory;
 
     /**
@@ -85,7 +96,10 @@ public class WindupMojo extends AbstractMojo
     @Parameter(alias = "offline", property = "offline", required = false)
     private Boolean offlineMode;
 
-    @Parameter(property = "overwrite", required = false)
+    @Parameter( property = "sourceMode", required = false, defaultValue = "true" )
+    private Boolean sourceMode;
+
+    @Parameter( property = "overwrite", required = false )
     private Boolean overwrite;
 
     @Parameter(property = "userIgnorePath", required = false)
@@ -94,11 +108,47 @@ public class WindupMojo extends AbstractMojo
     @Parameter(property = "userRulesDirectory", required = false)
     private String userRulesDirectory;
 
-    @Parameter(property = "windupVersion", required = true)
+    @Parameter( property = "includeTags", required = false )
+    private List<String> includeTags;
+
+    @Parameter( property = "excludeTags", required = false )
+    private List<String> excludeTags;
+
+    @Parameter( property = "sourceTechnologies", required = false )
+    private List<String> sources;
+
+    @Parameter( property = "targetTechnologies", required = false)
+    private List<String> targets;
+
+
+    @Parameter( property = "windupVersion", required = true )
     private String windupVersion;
 
     @Parameter(property = "forgeVersion", required = true)
     private String forgeVersion;
+
+    @Parameter(property = "furnaceVersion", required = true)
+    private String furnaceVersion;
+
+
+    @Parameter(property = "keepWorkDirs", required = false)
+    private Boolean keepWorkDirs;
+
+    @Parameter(property = "explodedApps", required = false)
+    private Boolean explodedApps;
+
+    @Parameter(property = "exportCSV", required = false)
+    private Boolean exportCSV;
+
+    //@Parameter(property = "enableTattletale", required = false)
+    private Boolean enableTattletale;
+
+    ///@Parameter(property = "excludePackages", required = false)
+    private List<String> excludePackages;
+
+    ///@Parameter(property = "enableCompatibleFilesReport", required = false)
+    private Boolean enableCompatibleFilesReport;
+
 
     public static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
     public static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets";
@@ -109,22 +159,26 @@ public class WindupMojo extends AbstractMojo
         System.setProperty(PathUtil.WINDUP_HOME, Paths.get(buildDirectory, "winduphome").toString());
 
         WindupConfiguration windupConfiguration = new WindupConfiguration();
-        windupConfiguration.setOptionValue("packages", packages);
-        // RM: Commented by upgrade to WindUp latest version
-        // windupConfiguration.setInputPath(Paths.get(inputDirectory));
+        windupConfiguration.setOptionValue(ScanPackagesOption.NAME, packages);
         windupConfiguration.addInputPath(Paths.get(inputDirectory));
         windupConfiguration.setOutputDirectory(Paths.get(outputDirectory));
+        windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
 
         windupConfiguration.setOffline(offlineMode == Boolean.TRUE);
+        windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode == Boolean.TRUE);
+        windupConfiguration.setOptionValue(OverwriteOption.NAME, overwrite == Boolean.TRUE);
+        windupConfiguration.setOptionValue(IncludeTagsOption.NAME, includeTags);
+        windupConfiguration.setOptionValue(ExcludeTagsOption.NAME, excludeTags);
+        windupConfiguration.setOptionValue(SourceOption.NAME, sources);
+        windupConfiguration.setOptionValue(TargetOption.NAME, targets);
 
-        windupConfiguration.setOptionValue("overwrite", overwrite);
+        windupConfiguration.setOptionValue(KeepWorkDirsOption.NAME, keepWorkDirs == Boolean.TRUE);
+        windupConfiguration.setOptionValue(ExplodedAppInputOption.NAME, explodedApps == Boolean.TRUE);
+        windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
+        windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, enableCompatibleFilesReport);
+        windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, enableTattletale == Boolean.TRUE);
 
-        unzipRules();
-
-        // artifactResolver.re
-        // System.out.println(artifactRepository
-        // .find(new DefaultArtifact(WINDUP_RULES_GROUP_ID, WINDUP_RULES_ARTIFACT_ID, windupVersion, null, "jar", null, null))
-        // .getFile());
+        downloadAndUnzipRules();
 
         windupConfiguration.addDefaultUserRulesDirectory(PathUtil.getWindupRulesDir());
 
@@ -139,76 +193,52 @@ public class WindupMojo extends AbstractMojo
                 e.printStackTrace();
             }
         }
+
         if (userRulesDirectory != null)
             windupConfiguration.addDefaultUserRulesDirectory(Paths.get(userRulesDirectory));
 
-
         if (userIgnorePath == null)
-        {
-            // RM: Modify by upgrade to WindUp latest version
-            // userIgnorePath = WindupPathUtil.getWindupIgnoreListDir().toString();
-            userIgnorePath = PathUtil.getWindupIgnoreDir().toString();
-        }
+        	userIgnorePath = PathUtil.getWindupIgnoreDir().toString();
+        windupConfiguration.addDefaultUserIgnorePath(Paths.get(userIgnorePath));
 
-        if (userIgnorePath != null && !Files.isDirectory(Paths.get(userIgnorePath)))
-        {
-            try
-            {
-                Files.createDirectories(Paths.get(userIgnorePath));
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
 
-        if (userIgnorePath != null)
-            windupConfiguration.addDefaultUserIgnorePath(Paths.get(userIgnorePath));
+        Furnace furnace = createAndStartFurnace();
 
-        FileUtils.deleteQuietly(windupConfiguration.getOutputDirectory().toFile());
+        install("org.jboss.forge.addon:core,"+forgeVersion, true, furnace);
+        //install("org.jboss.forge.addon:furnace,"+forgeVersion, true, furnace);
+        //install("org.jboss.forge.furnace.container:cdi,"+forgeVersion, true, furnace);
+        install("org.jboss.forge.furnace.container:simple,"+furnaceVersion, true, furnace);
+        //install("org.jboss.forge.addon:convert,"+forgeVersion, true, furnace);
+        //install("org.jboss.forge.addon:shell,"+forgeVersion, true, furnace);
+        install("org.jboss.windup:windup-tooling,"+windupVersion, true, furnace);
+        install("org.jboss.windup.exec:windup-exec,"+windupVersion, true, furnace);
+        install("org.jboss.windup.utils:windup-utils,"+windupVersion, true, furnace);
+        install("org.jboss.windup.ui:windup-ui,"+windupVersion, true, furnace);
+        install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
+        install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
+        install("org.jboss.windup.rules.apps:windup-rules-java-ee,"+windupVersion, true, furnace);
+        install("org.jboss.windup.rules.apps:windup-rules-java-project,"+windupVersion, true, furnace);
+        //install("org.jboss.windup.rules.apps:windup-rules-tattletale,"+windupVersion, true, furnace);
+
+
+        AddonRegistry addonRegistry = furnace.getAddonRegistry();
+        WindupProcessor windupProcessor = addonRegistry.getServices(WindupProcessor.class).get();
+
+        GraphContextFactory graphContextFactory = addonRegistry.getServices(GraphContextFactory.class).get();
+
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
-
-        Furnace furnace = getFurnace();
-        try
+        try (GraphContext graphContext = graphContextFactory.create(graphPath))
         {
-            start(true, true, furnace);
-
-            install("org.jboss.forge.addon:addon-manager," + forgeVersion, true, furnace);
-            install("org.jboss.forge.addon:maven," + forgeVersion, true, furnace);
-            install("org.jboss.forge.addon:projects," + forgeVersion, true, furnace);
-            install("org.jboss.windup.ui:windup-ui," + windupVersion, true, furnace);
-            install("org.jboss.windup.rules.apps:windup-rules-java," + windupVersion, true, furnace);
-            install("org.jboss.windup.rules.apps:windup-rules-java-project," + windupVersion, true, furnace);
-            install("org.jboss.windup.rules.apps:windup-rules-java-ee," + windupVersion, true, furnace);
-            install("org.jboss.windup:windup-tooling," + windupVersion, true, furnace);
-            install("org.jboss.windup.rules.apps:windup-rules-tattletale," + windupVersion, true, furnace);
-
-            AddonRegistry addonRegistry = furnace.getAddonRegistry();
-            WindupProcessor windupProcessor = addonRegistry.getServices(WindupProcessor.class).get();
-
-            GraphContextFactory graphContextFactory = addonRegistry.getServices(GraphContextFactory.class).get();
-
-            try (GraphContext graphContext = graphContextFactory.create(graphPath))
-            {
-
-                windupConfiguration
-                            .setGraphContext(graphContext);
-                windupProcessor.execute(windupConfiguration);
-
-                System.out.println("Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html");
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
+            windupConfiguration.setGraphContext(graphContext);
+            windupProcessor.execute(windupConfiguration);
+            System.out.println("Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html");
         }
-        catch (InterruptedException | ExecutionException e)
-        {
+        catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    private void unzipRules()
+    private void downloadAndUnzipRules()
     {
         MavenContainer mavenContainer = new MavenContainer();
         RepositorySystem system = mavenContainer.getRepositorySystem();
@@ -225,15 +255,14 @@ public class WindupMojo extends AbstractMojo
                 Files.createDirectories(outputDirectory);
             ZipUtil.unzipToFolder(artifactResult.getArtifact().getFile(), outputDirectory.toFile());
         }
-        catch (Exception e)
+        catch (ArtifactResolutionException | IOException e)
         {
             throw new RuntimeException(e);
         }
     }
 
-    public static Furnace getFurnace()
+    private static Furnace createAndStartFurnace()
     {
-
         // Create a Furnace instance. NOTE: This must be called only once
         Furnace furnace = FurnaceFactory.getInstance();
         // Add repository containing addons specified in pom.xml
@@ -253,42 +282,11 @@ public class WindupMojo extends AbstractMojo
         }
     }
 
-    public List<AddonId> getEnabledAddonIds(Furnace furnace)
-    {
-        List<AddonId> result = new ArrayList<>();
-        for (AddonRepository repository : furnace.getRepositories())
-        {
-            List<AddonId> addons = repository.listEnabled();
-            result.addAll(addons);
-        }
-        return result;
-    }
 
     /**
-     * Install core addons if none are installed; then start.
+     * TODO: Copied from Windup. Refactor.
      */
-    public void start(boolean exitAfter, boolean batchMode, Furnace furnace) throws InterruptedException, ExecutionException
-    {
-        if (exitAfter)
-            return;
-
-        if (!batchMode)
-        {
-            List<AddonId> addonIds = getEnabledAddonIds(furnace);
-            if (addonIds.isEmpty())
-            {
-                String result = System.console().readLine(
-                            "There are no addons installed; install core addons now? [Y,n] ");
-                if (!"n".equalsIgnoreCase(result.trim()))
-                {
-                    install("core", batchMode, furnace);
-                }
-            }
-        }
-
-    }
-
-    public boolean install(String addonCoordinates, boolean batchMode, Furnace furnace)
+    private boolean install(String addonCoordinates, boolean batchMode, Furnace furnace)
     {
         Version runtimeAPIVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
         try
@@ -296,71 +294,36 @@ public class WindupMojo extends AbstractMojo
             AddonDependencyResolver resolver = new MavenAddonDependencyResolver();
             AddonManagerImpl addonManager = new AddonManagerImpl(furnace, resolver);
 
-            AddonId addon;
+            AddonId addon = null;
             // This allows windup --install maven
             if (addonCoordinates.contains(","))
             {
-                if (addonCoordinates.contains(":"))
-                {
-                    addon = AddonId.fromCoordinates(addonCoordinates);
-                }
-                else
-                {
-                    addon = AddonId.fromCoordinates(FORGE_ADDON_GROUP_ID + addonCoordinates);
-                }
+                addon = AddonId.fromCoordinates((addonCoordinates.contains(":") ? "" : FORGE_ADDON_GROUP_ID) + addonCoordinates);
             }
             else
             {
-                AddonId[] versions;
-                String coordinate;
-                if (addonCoordinates.contains(":"))
-                {
-                    coordinate = addonCoordinates;
-                    versions = resolver.resolveVersions(addonCoordinates).get();
-                }
-                else
-                {
-                    coordinate = FORGE_ADDON_GROUP_ID + addonCoordinates;
-                    versions = resolver.resolveVersions(coordinate).get();
-                }
+                String coordinate = (addonCoordinates.contains(":") ? "" : FORGE_ADDON_GROUP_ID) + addonCoordinates;
+                AddonId[] versions = resolver.resolveVersions(coordinate).get();
 
                 if (versions.length == 0)
-                {
                     throw new IllegalArgumentException("No Artifact version found for " + coordinate);
-                }
-                else
-                {
-                    AddonId selected = null;
-                    for (int i = versions.length - 1; selected == null && i >= 0; i--)
-                    {
-                        String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
-                        if (apiVersion != null
-                                    && Versions.isApiCompatible(runtimeAPIVersion, SingleVersion.valueOf(apiVersion)))
-                        {
-                            selected = versions[i];
-                        }
-                    }
-                    if (selected == null)
-                    {
-                        throw new IllegalArgumentException("No compatible addon API version found for " + coordinate
-                                    + " for API " + runtimeAPIVersion);
-                    }
 
-                    addon = selected;
+                for (int i = versions.length - 1; i >= 0; i--)
+                {
+                    String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
+                    if (apiVersion != null && Versions.isApiCompatible(runtimeAPIVersion, SingleVersion.valueOf(apiVersion)))
+                    {
+                        addon = versions[i];
+                        break;
+                    }
                 }
             }
+
+            if (addon == null)
+                throw new IllegalArgumentException("No compatible addon API version found for " + addonCoordinates + " for API " + runtimeAPIVersion);
 
             AddonActionRequest request = addonManager.install(addon);
             System.out.println(request);
-            if (!batchMode)
-            {
-                String result = System.console().readLine("Confirm installation [Y/n]? ");
-                if ("n".equalsIgnoreCase(result.trim()))
-                {
-                    System.out.println("Installation aborted.");
-                    return false;
-                }
-            }
             request.perform();
             System.out.println("Installation completed successfully.");
             System.out.println();
