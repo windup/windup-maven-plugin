@@ -13,39 +13,39 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <windup.version>2.5.0-SNAPSHOT</windup.version>
-        <forge.version>2.20.1.Final</forge.version>
-        <furnace.version>2.22.10.Final</furnace.version>
+        <version.windup>2.5.0-SNAPSHOT</version.windup>
+        <version.forge>2.20.1.Final</version.forge>
+        <version.furnace>2.22.10.Final</version.furnace>
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
     </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-bom</artifactId>
-                <version>${windup.version}</version>
+                <version>${version.windup}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.rules</groupId>
                 <artifactId>windup-rulesets</artifactId>
-                <version>${windup.version}</version>
+                <version>${version.windup}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
+
     <dependencies>
 
-        <dependency>
-            <groupId>org.jboss.windup</groupId>
-            <artifactId>windup-bootstrap</artifactId>
-        </dependency>
+        <!-- Rules and data -->
         <dependency>
             <groupId>org.jboss.windup.maven</groupId>
             <artifactId>nexus-indexer-data</artifactId>
             <type>zip</type>
         </dependency>
+
         <dependency>
             <groupId>org.jboss.windup.rules</groupId>
             <artifactId>windup-rulesets</artifactId>
@@ -61,10 +61,18 @@
             <artifactId>maven-artifact</artifactId>
             <version>3.2.5</version>
         </dependency>
+        <!-- Logging and tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
 
+        <!-- Maven plugin API -->
         <dependency>
             <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact-manager</artifactId>
+            <artifactId>maven-plugin-api</artifactId>
             <version>2.2.1</version>
         </dependency>
 
@@ -79,11 +87,73 @@
             <artifactId>plexus-utils</artifactId>
             <version>3.0.22</version>
         </dependency>
+
+        <!-- Windup dependencies -->
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-bootstrap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.graph</groupId>
+            <artifactId>windup-graph</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.config</groupId>
+            <artifactId>windup-config</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.ui</groupId>
+            <artifactId>windup-ui</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.utils</groupId>
+            <artifactId>windup-utils</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.exec</groupId>
+            <artifactId>windup-exec</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+
+
+
+        <!-- Furnace -->
+        <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-se</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace</groupId>
+            <artifactId>furnace-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.forge.furnace.container</groupId>
+            <!-- Windup switched from :cdi to :simple due to problems with Titan classloading. -->
+            <artifactId>simple</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+
+        <!-- Forge -->
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>resources</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        <!--///
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>ui</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.jboss.forge.addon</groupId>
+            <artifactId>facets</artifactId>
+            <classifier>forge-addon</classifier>
         </dependency>
 
     </dependencies>
