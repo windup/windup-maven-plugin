@@ -11,9 +11,9 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <windup.version>2.0.0-SNAPSHOT</windup.version>
-      <forge.version>2.12.1.Final</forge.version>
-      <inputDirectory>/Users/samueltauil/Development/windup/jee-example-app-1.0.0.ear</inputDirectory>
+      <windup.version>2.5.0.CR1</windup.version>
+      <forge.version>2.20.1.Final</forge.version>
+      <inputDirectory>${project.basedir}/../Applications/public/jee-example-app-1.0.0.ear</inputDirectory>
       <outputDirectory>${project.build.directory}/windup-report</outputDirectory>
   </properties>
 
@@ -24,7 +24,6 @@
         <artifactId>windup-maven-plugin</artifactId>
         <version>1.0-SNAPSHOT</version>
           <configuration>
-
               <packages>
                   <package>org.apache</package>
                   <package>com.acme</package>
