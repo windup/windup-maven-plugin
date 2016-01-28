@@ -231,7 +231,10 @@ public class WindupMojo extends AbstractMojo
         {
             windupConfiguration.setGraphContext(graphContext);
             windupProcessor.execute(windupConfiguration);
-            System.out.println("Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html");
+            System.out.println(
+                "\n\n================================================================================================================="
+              + "\n\n    Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html"
+              + "\n\n=================================================================================================================\n");
         }
         catch (IOException e) {
             e.printStackTrace();

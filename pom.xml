@@ -141,13 +141,6 @@
             <version>${version.windup}</version> <!-- TODO: Remove when added to BOM. -->
             <scope>provided</scope> <!-- Only needs a constant. -->
         </dependency>
-        <!-- Logging and tests -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
 
 
 
