@@ -39,43 +39,17 @@
 
     <dependencies>
 
-        <!-- Rules and data -->
-        <dependency>
-            <groupId>org.jboss.windup.maven</groupId>
-            <artifactId>nexus-indexer-data</artifactId>
-            <type>zip</type>
-        </dependency>
-
-        <dependency>
-            <groupId>org.jboss.windup.rules</groupId>
-            <artifactId>windup-rulesets</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-plugin-api</artifactId>
-            <version>3.2.5</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.maven</groupId>
-            <artifactId>maven-artifact</artifactId>
-            <version>3.2.5</version>
-        </dependency>
-        <!-- Logging and tests -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-
         <!-- Maven plugin API -->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>2.2.1</version>
+            <version>3.3.9</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-artifact</artifactId>
+            <version>3.3.9</version>
+        </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
@@ -87,8 +61,26 @@
             <artifactId>plexus-utils</artifactId>
             <version>3.0.22</version>
         </dependency>
+        <!-- Logging and tests -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.12</version>
+            <scope>test</scope>
+        </dependency>
+
+
 
         <!-- Windup dependencies -->
+
+        <!-- This is an addon which contains all the core Windup dependencies you need to run Windup. -->
+        <dependency>
+            <groupId>org.jboss.windup</groupId>
+            <artifactId>windup-tooling</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+
+        <!-- /// TODO: So basically these all should not be needed. -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-bootstrap</artifactId>
@@ -117,6 +109,31 @@
             <groupId>org.jboss.windup.exec</groupId>
             <artifactId>windup-exec</artifactId>
             <classifier>forge-addon</classifier>
+        </dependency>
+
+        <!-- Rules and data -->
+        <dependency>
+            <groupId>org.jboss.windup.maven</groupId>
+            <artifactId>nexus-indexer-data</artifactId>
+            <type>zip</type>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.windup.rules</groupId>
+            <artifactId>windup-rulesets</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-java-project</artifactId>
+            <classifier>forge-addon</classifier>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jboss.windup.rules.apps</groupId>
+            <artifactId>windup-rules-tattletale</artifactId>
+            <classifier>forge-addon</classifier>
+            <version>${version.windup}</version> <!-- TODO: Remove when added to BOM. -->
+            <scope>provided</scope> <!-- Only needs a constant. -->
         </dependency>
 
 
@@ -161,7 +178,6 @@
             <artifactId>facets</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
-
     </dependencies>
 
     <build>
@@ -185,11 +201,11 @@
             </plugin>
         </plugins>
     </build>
+
     <profiles>
         <profile>
-            <id>run-its</id>
+            <id>run-integration-test</id>
             <build>
-
                 <plugins>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
@@ -221,7 +237,6 @@
                         </executions>
                     </plugin>
                 </plugins>
-
             </build>
         </profile>
     </profiles>

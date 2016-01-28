@@ -44,17 +44,22 @@ import org.jboss.forge.furnace.se.FurnaceFactory;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
+import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
+import org.jboss.windup.exec.configuration.options.ExplodedAppInputOption;
 import org.jboss.windup.exec.configuration.options.IncludeTagsOption;
 import org.jboss.windup.exec.configuration.options.OverwriteOption;
 import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
+import org.jboss.windup.rules.apps.java.reporting.rules.EnableCompatibleFilesReportOption;
+import org.jboss.windup.rules.apps.tattletale.EnableTattletaleReportOption;
 import org.jboss.windup.util.PathUtil;
 import org.jboss.windup.util.ZipUtil;
 import org.jboss.windup.util.exception.WindupException;
@@ -79,7 +84,7 @@ public class WindupMojo extends AbstractMojo
     /**
      * Location of the input file application.
      */
-    @Parameter( defaultValue = "${project.build.sourceDirectory}", property = "input", required = true )
+    @Parameter(alias="input", property = "input", required = true, defaultValue = "${project.build.sourceDirectory}" )
     private String inputDirectory;
 
     /**
@@ -125,6 +130,26 @@ public class WindupMojo extends AbstractMojo
     @Parameter(property = "furnaceVersion", required = true)
     private String furnaceVersion;
 
+
+    @Parameter(property = "keepWorkDirs", required = false)
+    private Boolean keepWorkDirs;
+
+    @Parameter(property = "explodedApps", required = false)
+    private Boolean explodedApps;
+
+    @Parameter(property = "exportCSV", required = false)
+    private Boolean exportCSV;
+
+    //@Parameter(property = "enableTattletale", required = false)
+    private Boolean enableTattletale;
+
+    ///@Parameter(property = "excludePackages", required = false)
+    private List<String> excludePackages;
+
+    ///@Parameter(property = "enableCompatibleFilesReport", required = false)
+    private Boolean enableCompatibleFilesReport;
+
+
     public static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
     public static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets";
     public static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
@@ -137,6 +162,7 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, packages);
         windupConfiguration.addInputPath(Paths.get(inputDirectory));
         windupConfiguration.setOutputDirectory(Paths.get(outputDirectory));
+        windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
 
         windupConfiguration.setOffline(offlineMode == Boolean.TRUE);
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode == Boolean.TRUE);
@@ -145,6 +171,12 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setOptionValue(ExcludeTagsOption.NAME, excludeTags);
         windupConfiguration.setOptionValue(SourceOption.NAME, sources);
         windupConfiguration.setOptionValue(TargetOption.NAME, targets);
+
+        windupConfiguration.setOptionValue(KeepWorkDirsOption.NAME, keepWorkDirs == Boolean.TRUE);
+        windupConfiguration.setOptionValue(ExplodedAppInputOption.NAME, explodedApps == Boolean.TRUE);
+        windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
+        windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, enableCompatibleFilesReport);
+        windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, enableTattletale == Boolean.TRUE);
 
         downloadAndUnzipRules();
 
@@ -185,6 +217,8 @@ public class WindupMojo extends AbstractMojo
         install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
         install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
         install("org.jboss.windup.rules.apps:windup-rules-java-ee,"+windupVersion, true, furnace);
+        install("org.jboss.windup.rules.apps:windup-rules-java-project,"+windupVersion, true, furnace);
+        //install("org.jboss.windup.rules.apps:windup-rules-tattletale,"+windupVersion, true, furnace);
 
 
         AddonRegistry addonRegistry = furnace.getAddonRegistry();
