@@ -7,7 +7,7 @@
         <artifactId>jboss-parent</artifactId>
         <version>17</version>
     </parent>
-    
+
     <groupId>org.jboss.windup.plugin</groupId>
     <artifactId>windup-maven-plugin</artifactId>
     <version>1.0-SNAPSHOT</version>
@@ -79,42 +79,16 @@
 
         <!-- Windup dependencies -->
 
-        <!-- This is an addon which contains all the core Windup dependencies you need to run Windup. -->
+        <!-- This should be the addon which contains all the core Windup dependencies you need to run Windup. -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-tooling</artifactId>
             <classifier>forge-addon</classifier>
         </dependency>
-
-        <!-- /// TODO: So basically these all should not be needed. -->
+        <!-- But it isn't. The needed rest is referenced as deps in bootstrap. -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-bootstrap</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.graph</groupId>
-            <artifactId>windup-graph</artifactId>
-            <classifier>forge-addon</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.config</groupId>
-            <artifactId>windup-config</artifactId>
-            <classifier>forge-addon</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.ui</groupId>
-            <artifactId>windup-ui</artifactId>
-            <classifier>forge-addon</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.utils</groupId>
-            <artifactId>windup-utils</artifactId>
-            <classifier>forge-addon</classifier>
-        </dependency>
-        <dependency>
-            <groupId>org.jboss.windup.exec</groupId>
-            <artifactId>windup-exec</artifactId>
-            <classifier>forge-addon</classifier>
         </dependency>
 
         <!-- Rules and data -->
@@ -138,7 +112,6 @@
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-tattletale</artifactId>
             <classifier>forge-addon</classifier>
-            <version>${version.windup}</version> <!-- TODO: Remove when added to BOM. -->
             <scope>provided</scope> <!-- Only needs a constant. -->
         </dependency>
 
