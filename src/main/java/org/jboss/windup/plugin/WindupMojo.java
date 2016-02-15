@@ -80,75 +80,75 @@ public class WindupMojo extends AbstractMojo
     /**
      * Location of the generated report files.
      */
-    @Parameter(alias = "output", property = "output", defaultValue = "${project.build.directory}/windup-report", required = true)
+    @Parameter( alias = "output", property = "output", defaultValue = "${project.build.directory}/windup-report", required = true)
     private String outputDirectory;
 
     /**
      * Location of the input file application.
      */
-    @Parameter(alias="input", property = "input", required = true, defaultValue = "${project.build.sourceDirectory}" )
+    @Parameter( alias="input", property = "input", required = true, defaultValue = "${project.build.sourceDirectory}" )
     private String inputDirectory;
 
     /**
      * Packages to be inspected by Windup.
      */
-    @Parameter(property = "packages", required = true)
+    @Parameter( alias="packages", property = "packages", required = true)
     private List<String> packages;
 
-    @Parameter(alias = "offline", property = "offline", required = false)
+    @Parameter( alias = "offline", property = "offline", required = false)
     private Boolean offlineMode;
 
-    @Parameter( property = "sourceMode", required = false, defaultValue = "true" )
+    @Parameter( alias="sourceMode", property = "sourceMode", required = false, defaultValue = "true" )
     private Boolean sourceMode;
 
-    @Parameter( property = "overwrite", required = false )
+    @Parameter( alias="overwrite", property = "overwrite", required = false )
     private Boolean overwrite;
 
-    @Parameter(property = "userIgnorePath", required = false)
+    @Parameter( alias="userIgnorePath", property = "userIgnorePath", required = false)
     private String userIgnorePath;
 
-    @Parameter(property = "userRulesDirectory", required = false)
+    @Parameter( alias="userRulesDirectory", property = "userRulesDirectory", required = false)
     private String userRulesDirectory;
 
-    @Parameter( property = "includeTags", required = false )
+    @Parameter( alias="includeTags", property = "includeTags", required = false )
     private List<String> includeTags;
 
-    @Parameter( property = "excludeTags", required = false )
+    @Parameter( alias="excludeTags", property = "excludeTags", required = false )
     private List<String> excludeTags;
 
-    @Parameter( property = "sourceTechnologies", required = false )
+    @Parameter( alias="sourceTechnologies", property = "sourceTechnologies", required = false )
     private List<String> sources;
 
-    @Parameter( property = "targetTechnologies", required = false)
+    @Parameter( alias="targetTechnologies", property = "targetTechnologies", required = false)
     private List<String> targets;
 
 
-    @Parameter( property = "windupVersion", required = true )
+    @Parameter( alias="windupVersion", property = "windupVersion", required = true )
     private String windupVersion;
 
-    @Parameter(property = "forgeVersion", required = true)
+    @Parameter( alias="forgeVersion", property = "forgeVersion", required = true)
     private String forgeVersion;
 
-    @Parameter(property = "furnaceVersion", required = true)
+    @Parameter( alias="furnaceVersion", property = "furnaceVersion", required = true)
     private String furnaceVersion;
 
 
-    @Parameter(property = "keepWorkDirs", required = false)
+    @Parameter( alias="keepWorkDirs", property = "keepWorkDirs", required = false)
     private Boolean keepWorkDirs;
 
-    @Parameter(property = "explodedApps", required = false)
+    @Parameter( alias="explodedApps", property = "explodedApps", required = false)
     private Boolean explodedApps;
 
-    @Parameter(property = "exportCSV", required = false)
+    @Parameter( alias="exportCSV", property = "exportCSV", required = false)
     private Boolean exportCSV;
 
-    //@Parameter(property = "enableTattletale", required = false)
+    //@Parameter( alias="enableTattletale", property = "enableTattletale", required = false)
     private Boolean enableTattletale;
 
-    ///@Parameter(property = "excludePackages", required = false)
+    ///@Parameter( alias="excludePackages", property = "excludePackages", required = false)
     private List<String> excludePackages;
 
-    ///@Parameter(property = "enableCompatibleFilesReport", required = false)
+    ///@Parameter( alias="enableCompatibleFilesReport", property = "enableCompatibleFilesReport", required = false)
     private Boolean enableCompatibleFilesReport;
 
 
@@ -212,21 +212,13 @@ public class WindupMojo extends AbstractMojo
 
         Furnace furnace = createAndStartFurnace();
 
-        install("org.jboss.forge.addon:core,"+forgeVersion, true, furnace);
-        //install("org.jboss.forge.addon:furnace,"+forgeVersion, true, furnace);
-        //install("org.jboss.forge.furnace.container:cdi,"+forgeVersion, true, furnace);
-        install("org.jboss.forge.furnace.container:simple,"+furnaceVersion, true, furnace);
-        //install("org.jboss.forge.addon:convert,"+forgeVersion, true, furnace);
-        //install("org.jboss.forge.addon:shell,"+forgeVersion, true, furnace);
-        install("org.jboss.windup:windup-tooling,"+windupVersion, true, furnace);
-        install("org.jboss.windup.exec:windup-exec,"+windupVersion, true, furnace);
-        install("org.jboss.windup.utils:windup-utils,"+windupVersion, true, furnace);
-        install("org.jboss.windup.ui:windup-ui,"+windupVersion, true, furnace);
-        install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
-        install("org.jboss.windup.rules.apps:windup-rules-java,"+windupVersion, true, furnace);
-        install("org.jboss.windup.rules.apps:windup-rules-java-ee,"+windupVersion, true, furnace);
-        install("org.jboss.windup.rules.apps:windup-rules-java-project,"+windupVersion, true, furnace);
-        //install("org.jboss.windup.rules.apps:windup-rules-tattletale,"+windupVersion, true, furnace);
+        install("org.jboss.forge.addon:core,"+forgeVersion, furnace);
+        install("org.jboss.forge.furnace.container:simple,"+furnaceVersion, furnace); // :simple instead of :cdi
+        install("org.jboss.windup:windup-tooling,"+windupVersion, furnace);
+        install("org.jboss.windup.rules.apps:windup-rules-java-project,"+windupVersion, furnace);
+
+        if(enableTattletale == Boolean.TRUE)
+            install("org.jboss.windup.rules.apps:windup-rules-tattletale,"+windupVersion, furnace);
 
 
         AddonRegistry addonRegistry = furnace.getAddonRegistry();
@@ -239,7 +231,10 @@ public class WindupMojo extends AbstractMojo
         {
             windupConfiguration.setGraphContext(graphContext);
             windupProcessor.execute(windupConfiguration);
-            System.out.println("Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html");
+            System.out.println(
+                "\n\n=========================================================================================================================="
+              + "\n\n    Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html"
+              + "\n\n==========================================================================================================================\n");
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -275,9 +270,9 @@ public class WindupMojo extends AbstractMojo
         Furnace furnace = FurnaceFactory.getInstance();
         // Add repository containing addons specified in pom.xml
         furnace.addRepository(AddonRepositoryMode.MUTABLE, new File("target/addons"));
-        // Start Furnace in another thread
-        System.setProperty("INTERACTIVE", "true");
 
+        // Start Furnace in another thread
+        System.setProperty("INTERACTIVE", "false");
         Future<Furnace> future = furnace.startAsync();
         try
         {
@@ -294,7 +289,7 @@ public class WindupMojo extends AbstractMojo
     /**
      * TODO: Copied from Windup. Refactor.
      */
-    private boolean install(String addonCoordinates, boolean batchMode, Furnace furnace)
+    private boolean install(String addonCoordinates, Furnace furnace)
     {
         Version runtimeAPIVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
         try
