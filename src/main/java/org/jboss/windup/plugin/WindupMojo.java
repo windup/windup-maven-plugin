@@ -12,9 +12,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import org.apache.commons.lang3.StringUtils;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -159,24 +161,30 @@ public class WindupMojo extends AbstractMojo
         System.setProperty(PathUtil.WINDUP_HOME, Paths.get(buildDirectory, "winduphome").toString());
 
         WindupConfiguration windupConfiguration = new WindupConfiguration();
-        windupConfiguration.setOptionValue(ScanPackagesOption.NAME, packages);
+
         windupConfiguration.addInputPath(Paths.get(inputDirectory));
         windupConfiguration.setOutputDirectory(Paths.get(outputDirectory));
-        windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
+
+        packages        = normalizePackages(packages);
+        excludePackages = normalizePackages(excludePackages);
+        windupConfiguration.setOptionValue(ScanPackagesOption.NAME, packages);
+        windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
+
 
         windupConfiguration.setOffline(offlineMode == Boolean.TRUE);
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode == Boolean.TRUE);
+        windupConfiguration.setOptionValue(ExplodedAppInputOption.NAME, explodedApps == Boolean.TRUE);
         windupConfiguration.setOptionValue(OverwriteOption.NAME, overwrite == Boolean.TRUE);
+
         windupConfiguration.setOptionValue(IncludeTagsOption.NAME, includeTags);
         windupConfiguration.setOptionValue(ExcludeTagsOption.NAME, excludeTags);
         windupConfiguration.setOptionValue(SourceOption.NAME, sources);
         windupConfiguration.setOptionValue(TargetOption.NAME, targets);
 
         windupConfiguration.setOptionValue(KeepWorkDirsOption.NAME, keepWorkDirs == Boolean.TRUE);
-        windupConfiguration.setOptionValue(ExplodedAppInputOption.NAME, explodedApps == Boolean.TRUE);
-        windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
         windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, enableCompatibleFilesReport);
         windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, enableTattletale == Boolean.TRUE);
+        windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
 
         downloadAndUnzipRules();
 
@@ -334,5 +342,24 @@ public class WindupMojo extends AbstractMojo
             System.out.println("> Forge version [" + runtimeAPIVersion + "]");
         }
         return true;
+    }
+
+
+    /**
+     * Removes the .* suffix, which is expectable the users will use.
+     */
+    private static List<String> normalizePackages(List<String> packages)
+    {
+
+        List<String> result = new ArrayList<>(packages.size());
+        for (String pkg : packages)
+        {
+            if(pkg.endsWith(".*")){
+                System.out.println("Warning: removing the .* suffix from the package prefix: " + pkg);
+            }
+            result.add(StringUtils.removeEndIgnoreCase(pkg, ".*"));
+        }
+
+        return packages;
     }
 }
