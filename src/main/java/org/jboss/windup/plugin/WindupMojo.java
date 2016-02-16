@@ -345,6 +345,8 @@ public class WindupMojo extends AbstractMojo
      */
     private static List<String> normalizePackages(List<String> packages)
     {
+        if (packages == null)
+            return null;
 
         List<String> result = new ArrayList<>(packages.size());
         for (String pkg : packages)
