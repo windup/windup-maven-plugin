@@ -95,6 +95,9 @@ public class WindupMojo extends AbstractMojo
     @Parameter( alias="packages", property = "packages", required = true)
     private List<String> packages;
 
+    @Parameter( alias="excludePackages", property = "excludePackages", required = false)
+    private List<String> excludePackages;
+
     @Parameter( alias = "offline", property = "offline", required = false)
     private Boolean offlineMode;
 
@@ -145,10 +148,7 @@ public class WindupMojo extends AbstractMojo
     //@Parameter( alias="enableTattletale", property = "enableTattletale", required = false)
     private Boolean enableTattletale;
 
-    ///@Parameter( alias="excludePackages", property = "excludePackages", required = false)
-    private List<String> excludePackages;
-
-    ///@Parameter( alias="enableCompatibleFilesReport", property = "enableCompatibleFilesReport", required = false)
+    @Parameter( alias="enableCompatibleFilesReport", property = "enableCompatibleFilesReport", required = false)
     private Boolean enableCompatibleFilesReport;
 
 
@@ -231,7 +231,7 @@ public class WindupMojo extends AbstractMojo
         {
             windupConfiguration.setGraphContext(graphContext);
             windupProcessor.execute(windupConfiguration);
-            System.out.println(
+            getLog().info(
                 "\n\n=========================================================================================================================="
               + "\n\n    Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html"
               + "\n\n==========================================================================================================================\n");
@@ -326,15 +326,14 @@ public class WindupMojo extends AbstractMojo
                 throw new IllegalArgumentException("No compatible addon API version found for " + addonCoordinates + " for API " + runtimeAPIVersion);
 
             AddonActionRequest request = addonManager.install(addon);
-            System.out.println(request);
+            getLog().info(request.toString());
             request.perform();
-            System.out.println("Installation completed successfully.");
-            System.out.println();
+            getLog().info("Installation completed successfully.\n");
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            System.out.println("> Forge version [" + runtimeAPIVersion + "]");
+            getLog().error(e);
+            getLog().error("> Forge version [" + runtimeAPIVersion + "]");
         }
         return true;
     }
@@ -343,7 +342,7 @@ public class WindupMojo extends AbstractMojo
     /**
      * Removes the .* suffix, which is expectable the users will use.
      */
-    private static List<String> normalizePackages(List<String> packages)
+    private List<String> normalizePackages(List<String> packages)
     {
         if (packages == null)
             return null;
@@ -352,7 +351,7 @@ public class WindupMojo extends AbstractMojo
         for (String pkg : packages)
         {
             if(pkg.endsWith(".*")){
-                System.out.println("Warning: removing the .* suffix from the package prefix: " + pkg);
+                getLog().warn("Warning: removing the .* suffix from the package prefix: " + pkg);
             }
             result.add(StringUtils.removeEndIgnoreCase(pkg, ".*"));
         }
