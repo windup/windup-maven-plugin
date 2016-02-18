@@ -9,11 +9,13 @@ package org.jboss.windup.plugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import org.apache.commons.lang3.StringUtils;
@@ -74,6 +76,9 @@ import org.jboss.windup.util.exception.WindupException;
 @Execute(phase = LifecyclePhase.GENERATE_SOURCES)
 public class WindupMojo extends AbstractMojo
 {
+    private static final String VERSION_DEFINITIONS_FILE = "META-INF/versions.properties";
+
+
     @Parameter(defaultValue = "${project.build.directory}")
     private String buildDirectory;
 
@@ -94,6 +99,9 @@ public class WindupMojo extends AbstractMojo
      */
     @Parameter( alias="packages", property = "packages", required = true)
     private List<String> packages;
+
+    @Parameter( alias="excludePackages", property = "excludePackages", required = false)
+    private List<String> excludePackages;
 
     @Parameter( alias = "offline", property = "offline", required = false)
     private Boolean offlineMode;
@@ -123,15 +131,8 @@ public class WindupMojo extends AbstractMojo
     private List<String> targets;
 
 
-    @Parameter( alias="windupVersion", property = "windupVersion", required = true )
+    @Parameter( alias="windupVersion", property = "windupVersion", required = false )
     private String windupVersion;
-
-    @Parameter( alias="forgeVersion", property = "forgeVersion", required = true)
-    private String forgeVersion;
-
-    @Parameter( alias="furnaceVersion", property = "furnaceVersion", required = true)
-    private String furnaceVersion;
-
 
     @Parameter( alias="keepWorkDirs", property = "keepWorkDirs", required = false)
     private Boolean keepWorkDirs;
@@ -142,19 +143,16 @@ public class WindupMojo extends AbstractMojo
     @Parameter( alias="exportCSV", property = "exportCSV", required = false)
     private Boolean exportCSV;
 
-    //@Parameter( alias="enableTattletale", property = "enableTattletale", required = false)
+    @Parameter( alias="enableTattletale", property = "enableTattletale", required = false)
     private Boolean enableTattletale;
 
-    ///@Parameter( alias="excludePackages", property = "excludePackages", required = false)
-    private List<String> excludePackages;
-
-    ///@Parameter( alias="enableCompatibleFilesReport", property = "enableCompatibleFilesReport", required = false)
+    @Parameter( alias="enableCompatibleFilesReport", property = "enableCompatibleFilesReport", required = false)
     private Boolean enableCompatibleFilesReport;
 
 
-    public static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
-    public static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets";
-    public static final String FORGE_ADDON_GROUP_ID = "org.jboss.forge.addon:";
+    private static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
+    private static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets";
+
 
     public void execute() throws MojoExecutionException
     {
@@ -210,15 +208,39 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.addDefaultUserIgnorePath(Paths.get(userIgnorePath));
 
 
+        Properties versions;
+        try
+        {
+            versions = loadVersions(VERSION_DEFINITIONS_FILE);
+        }
+        catch (IOException ex)
+        {
+            final String msg = "Can't load the version definitions from classpath: " + VERSION_DEFINITIONS_FILE;
+            throw new MojoExecutionException(msg, ex);
+        }
+
+        final String furnaceVersion = versions.getProperty("version.furnace");
+        if(furnaceVersion == null)
+            throw new MojoExecutionException("Internal error: Version of Furnace was not defined.");
+
+        final String forgeVersion = versions.getProperty("version.forge");
+        if(forgeVersion == null)
+            throw new MojoExecutionException("Internal error: Version of Forge was not defined.");
+
+        final String windupVersion_ = versions.getProperty("version.windup");
+        if(null != windupVersion_)
+            this.windupVersion = windupVersion_;
+        if(null == this.windupVersion)
+            throw new MojoExecutionException("Internal error: Version of Windup which should be used was not defined.");
+
         Furnace furnace = createAndStartFurnace();
+        install("org.jboss.forge.furnace.container:simple," + furnaceVersion, furnace); // :simple instead of :cdi
+        install("org.jboss.forge.addon:core," + forgeVersion, furnace);
+        install("org.jboss.windup:windup-tooling," + this.windupVersion, furnace);
+        install("org.jboss.windup.rules.apps:windup-rules-java-project," + this.windupVersion, furnace);
 
-        install("org.jboss.forge.addon:core,"+forgeVersion, furnace);
-        install("org.jboss.forge.furnace.container:simple,"+furnaceVersion, furnace); // :simple instead of :cdi
-        install("org.jboss.windup:windup-tooling,"+windupVersion, furnace);
-        install("org.jboss.windup.rules.apps:windup-rules-java-project,"+windupVersion, furnace);
-
-        if(enableTattletale == Boolean.TRUE)
-            install("org.jboss.windup.rules.apps:windup-rules-tattletale,"+windupVersion, furnace);
+        if(this.enableTattletale == Boolean.TRUE)
+            install("org.jboss.windup.rules.apps:windup-rules-tattletale," + this.windupVersion, furnace);
 
 
         AddonRegistry addonRegistry = furnace.getAddonRegistry();
@@ -231,7 +253,7 @@ public class WindupMojo extends AbstractMojo
         {
             windupConfiguration.setGraphContext(graphContext);
             windupProcessor.execute(windupConfiguration);
-            System.out.println(
+            getLog().info(
                 "\n\n=========================================================================================================================="
               + "\n\n    Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html"
               + "\n\n==========================================================================================================================\n");
@@ -289,7 +311,7 @@ public class WindupMojo extends AbstractMojo
     /**
      * TODO: Copied from Windup. Refactor.
      */
-    private boolean install(String addonCoordinates, Furnace furnace)
+    private void install(String addonCoordinates, Furnace furnace)
     {
         Version runtimeAPIVersion = AddonRepositoryImpl.getRuntimeAPIVersion();
         try
@@ -300,50 +322,52 @@ public class WindupMojo extends AbstractMojo
             AddonId addon = null;
             // This allows windup --install maven
             if (addonCoordinates.contains(","))
-            {
-                addon = AddonId.fromCoordinates((addonCoordinates.contains(":") ? "" : FORGE_ADDON_GROUP_ID) + addonCoordinates);
-            }
+                addon = AddonId.fromCoordinates(addonCoordinates);
             else
-            {
-                String coordinate = (addonCoordinates.contains(":") ? "" : FORGE_ADDON_GROUP_ID) + addonCoordinates;
-                AddonId[] versions = resolver.resolveVersions(coordinate).get();
-
-                if (versions.length == 0)
-                    throw new IllegalArgumentException("No Artifact version found for " + coordinate);
-
-                for (int i = versions.length - 1; i >= 0; i--)
-                {
-                    String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
-                    if (apiVersion != null && Versions.isApiCompatible(runtimeAPIVersion, SingleVersion.valueOf(apiVersion)))
-                    {
-                        addon = versions[i];
-                        break;
-                    }
-                }
-            }
+                addon = pickLatestAddonVersion(resolver, addonCoordinates, runtimeAPIVersion, addon);
 
             if (addon == null)
                 throw new IllegalArgumentException("No compatible addon API version found for " + addonCoordinates + " for API " + runtimeAPIVersion);
 
             AddonActionRequest request = addonManager.install(addon);
-            System.out.println(request);
+            getLog().info("Requesting to install: " + request.toString());
             request.perform();
-            System.out.println("Installation completed successfully.");
-            System.out.println();
+            getLog().info("Installation completed successfully.\n");
         }
         catch (Exception e)
         {
-            e.printStackTrace();
-            System.out.println("> Forge version [" + runtimeAPIVersion + "]");
+            getLog().error(e);
+            getLog().error("> Forge version [" + runtimeAPIVersion + "]");
         }
-        return true;
+    }
+
+
+    private AddonId pickLatestAddonVersion(AddonDependencyResolver resolver, String addonCoordinates, Version runtimeAPIVersion, AddonId addon) throws IllegalArgumentException
+    {
+        AddonId[] versions = resolver.resolveVersions(addonCoordinates).get();
+        if (versions.length == 0)
+            throw new IllegalArgumentException("No Artifact version found for " + addonCoordinates);
+        for (int i = versions.length - 1; i >= 0; i--)
+        {
+            String apiVersion = resolver.resolveAPIVersion(versions[i]).get();
+            if (apiVersion != null && Versions.isApiCompatible(runtimeAPIVersion, SingleVersion.valueOf(apiVersion)))
+                return versions[i];
+        }
+        return null;
+    }
+
+    private Properties loadVersions(String path) throws IOException {
+        final InputStream propsFile = WindupMojo.class.getClassLoader().getResourceAsStream(path);
+        Properties props = new Properties();
+        props.load(propsFile);
+        return props;
     }
 
 
     /**
      * Removes the .* suffix, which is expectable the users will use.
      */
-    private static List<String> normalizePackages(List<String> packages)
+    private List<String> normalizePackages(List<String> packages)
     {
         if (packages == null)
             return null;
@@ -352,7 +376,7 @@ public class WindupMojo extends AbstractMojo
         for (String pkg : packages)
         {
             if(pkg.endsWith(".*")){
-                System.out.println("Warning: removing the .* suffix from the package prefix: " + pkg);
+                getLog().warn("Warning: removing the .* suffix from the package prefix: " + pkg);
             }
             result.add(StringUtils.removeEndIgnoreCase(pkg, ".*"));
         }
