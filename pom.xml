@@ -25,7 +25,7 @@
         <version.windup>2.5.0-SNAPSHOT</version.windup>
         <!-- For now, we need to pass this to the Mojo explicitly (through META-INF/versions.properties),
              but it should be possible to figure that out from the Windup POM. -->
-        <version.forge>2.20.1.Final</version.forge>
+        <version.forge>2.20.2.Final</version.forge>
         <version.furnace>2.22.10.Final</version.furnace>
     </properties>
 
