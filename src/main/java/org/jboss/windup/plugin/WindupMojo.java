@@ -276,7 +276,7 @@ public class WindupMojo extends AbstractMojo
         {
             ArtifactResult artifactResult = mavenContainer.getRepositorySystem().resolveArtifact(session, artifactRequest);
             Path outputDirectory = PathUtil.getWindupRulesDir();
-            if (!Files.isDirectory(Paths.get(userRulesDirectory)))
+            if (!Files.isDirectory(outputDirectory))
                 Files.createDirectories(outputDirectory);
             ZipUtil.unzipToFolder(artifactResult.getArtifact().getFile(), outputDirectory.toFile());
         }
