@@ -1,13 +1,13 @@
-=  Windup 2.0 Maven Plugin
+=  Windup 2.x Maven Plugin
 
 == Overview
 
 Windup Maven plugin is created collaboratively on the Windup project.
-This `windup-maven-plugin` repository takes the implementation of the plugin, this repository will contain the source for the official Maven plugin when the Windup 2.0 ships.
+This `windup-maven-plugin` repository takes the implementation of the plugin, this repository will contain the source for the official Maven plugin when the Windup 2.x ships.
 
 == Prerequisites
 
-To run properly Windup relies on Maven version lower than 3.2.5, so we recommend to use version 3.2.3.
+To run properly, Windup maven plugin relies on Maven version 3.2.5 and later.
 
 == Procedure to build the plugin 
     
