@@ -62,7 +62,7 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.compiler.source>1.7</maven.compiler.source>
 
-        <version.windup>2.7.0-SNAPSHOT</version.windup>
+        <version.windup>2.7.0.Final</version.windup>
         <!-- For now, we need to pass this to the Mojo explicitly (through META-INF/versions.properties),
              but it should be possible to figure that out from the Windup POM. -->
         <version.forge>2.20.2.Final</version.forge>
