@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-import org.apache.commons.lang3.StringUtils;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Execute;
@@ -103,8 +103,11 @@ public class WindupMojo extends AbstractMojo
     @Parameter( alias="excludePackages", property = "excludePackages", required = false)
     private List<String> excludePackages;
 
-    @Parameter( alias = "offline", property = "offline", required = false)
+    @Parameter( alias = "offline", property = "offline", required = true)
     private Boolean offlineMode;
+    
+    @Parameter( alias = "online", property = "online", required = false)
+    private Boolean onlineMode;
 
     @Parameter( alias="sourceMode", property = "sourceMode", required = false, defaultValue = "true" )
     private Boolean sourceMode;
@@ -168,8 +171,10 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setOptionValue(ScanPackagesOption.NAME, packages);
         windupConfiguration.setOptionValue(ExcludePackagesOption.NAME, excludePackages);
 
-
-        windupConfiguration.setOffline(offlineMode == Boolean.TRUE);
+        if (offlineMode != null && onlineMode == null)
+            onlineMode = !offlineMode.booleanValue();
+        
+        windupConfiguration.setOnline(onlineMode == Boolean.TRUE);
         windupConfiguration.setOptionValue(SourceModeOption.NAME, sourceMode == Boolean.TRUE);
         windupConfiguration.setOptionValue(ExplodedAppInputOption.NAME, explodedApps == Boolean.TRUE);
         windupConfiguration.setOptionValue(OverwriteOption.NAME, overwrite == Boolean.TRUE);
