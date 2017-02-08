@@ -62,11 +62,11 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
-        <version.windup>3.0.0-SNAPSHOT</version.windup>
+        <version.windup>3.0.0.Final</version.windup>
         <!-- For now, we need to pass this to the Mojo explicitly (through META-INF/versions.properties),
              but it should be possible to figure that out from the Windup POM. -->
         <version.forge>3.3.2.Final</version.forge>
-        <version.furnace>2.24.2.Final</version.furnace>
+        <version.furnace>2.24.3.Final</version.furnace>
     </properties>
 
     <dependencyManagement>
