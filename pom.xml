@@ -9,7 +9,7 @@
 
     <groupId>org.jboss.windup.plugin</groupId>
     <artifactId>windup-maven-plugin</artifactId>
-    <version>3.0.0.Final</version>
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Windup Maven Plugin</name>
@@ -28,7 +28,7 @@
    </prerequisites>
    
     <scm>
-        <tag>3.0.0.Final</tag>
+        <tag>master</tag>
         <url>http://github.com/windup/windup-maven-plugin</url>
         <connection>scm:git:https://github.com/windup/windup-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:windup/windup-maven-plugin.git</developerConnection>
@@ -62,7 +62,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
-        <version.windup>3.0.0.Final</version.windup>
+        <version.windup>3.1.0-SNAPSHOT</version.windup>
         <!-- For now, we need to pass this to the Mojo explicitly (through META-INF/versions.properties),
              but it should be possible to figure that out from the Windup POM. -->
         <version.forge>3.3.2.Final</version.forge>
