@@ -5,6 +5,7 @@
         <groupId>org.jboss</groupId>
         <artifactId>jboss-parent</artifactId>
         <version>22</version>
+        <relativePath/>
     </parent>
 
     <groupId>org.jboss.windup.plugin</groupId>
@@ -62,7 +63,8 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <maven.compiler.source>1.8</maven.compiler.source>
 
-        <version.windup>4.0.0.Beta2</version.windup>
+        <version.windupcore>4.0.0.Beta2</version.windupcore>
+        <version.windup-rulesets>4.0.0.Beta3</version.windup-rulesets>
         <!-- For now, we need to pass this to the Mojo explicitly (through META-INF/versions.properties),
              but it should be possible to figure that out from the Windup POM. -->
         <version.forge>3.6.0.Final</version.forge>
@@ -74,14 +76,14 @@
             <dependency>
                 <groupId>org.jboss.windup</groupId>
                 <artifactId>windup-bom</artifactId>
-                <version>${version.windup}</version>
+                <version>${version.windupcore}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.rules</groupId>
                 <artifactId>windup-rulesets</artifactId>
-                <version>${version.windup}</version>
+                <version>${version.windup-rulesets}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

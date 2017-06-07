@@ -136,6 +136,9 @@ public class WindupMojo extends AbstractMojo
 
     @Parameter( alias="windupVersion", property = "windupVersion", required = false )
     private String windupVersion;
+    
+    @Parameter( alias="windupRulesetsVersion", property = "windupRulesetsVersion", required = false )
+    private String windupRulesetsVersion;
 
     @Parameter( alias="keepWorkDirs", property = "keepWorkDirs", required = false)
     private Boolean keepWorkDirs;
@@ -276,7 +279,11 @@ public class WindupMojo extends AbstractMojo
         DefaultRepositorySystemSession session = mavenContainer.setupRepoSession(system, settings);
         ArtifactRequest artifactRequest = new ArtifactRequest();
         // <groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>
-        artifactRequest.setArtifact(new DefaultArtifact(WINDUP_RULES_GROUP_ID + ":" + WINDUP_RULES_ARTIFACT_ID + ":" + windupVersion));
+        if (windupRulesetsVersion == null) 
+        {
+            windupRulesetsVersion = windupVersion;
+        }
+        artifactRequest.setArtifact(new DefaultArtifact(WINDUP_RULES_GROUP_ID + ":" + WINDUP_RULES_ARTIFACT_ID + ":" + windupRulesetsVersion));
         try
         {
             ArtifactResult artifactResult = mavenContainer.getRepositorySystem().resolveArtifact(session, artifactRequest);
