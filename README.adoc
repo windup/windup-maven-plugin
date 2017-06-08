@@ -35,5 +35,11 @@ An example showing how to use the plugin can be found https://github.com/windup/
 
 More examples will be provided as well the list of all atributes that can be used by the plugin.
 
+== Procedure to release the plugin
 
-
+```
+export REL=<new_version> ; export DEV=<snapshot-version>
+mvn versions:update-property -Dproperty=version.windup -DnewVersion=$REL
+git commit -m "updated version.windup to $REL" pom.xml
+mvn clean release:prepare release:perform -DdevelopmentVersion=$DEV -DreleaseVersion=$REL -Dtag=$REL
+```
