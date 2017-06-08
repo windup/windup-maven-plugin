@@ -11,7 +11,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.windupcore>4.0.0.Beta2.1</version.windupcore>
+    <version.windupcore>4.0.0-SNAPSHOT</version.windupcore>
     <version.forge>3.6.0.Final</forge.version>
     <inputDirectory>${project.basedir}/../Applications/public/jee-example-app-1.0.0.ear</inputDirectory>
     <outputDirectory>${project.build.directory}/windup-report</outputDirectory>
