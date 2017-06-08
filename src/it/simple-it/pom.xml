@@ -11,10 +11,10 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-      <windup.version>3.0.0.Aplha1</windup.version>
-      <forge.version>3.3.2.Final</forge.version>
-      <inputDirectory>${project.basedir}/../Applications/public/jee-example-app-1.0.0.ear</inputDirectory>
-      <outputDirectory>${project.build.directory}/windup-report</outputDirectory>
+    <version.windupcore>4.0.0.Beta2.1</version.windupcore>
+    <version.forge>3.6.0.Final</forge.version>
+    <inputDirectory>${project.basedir}/../Applications/public/jee-example-app-1.0.0.ear</inputDirectory>
+    <outputDirectory>${project.build.directory}/windup-report</outputDirectory>
   </properties>
 
   <build>
@@ -32,8 +32,8 @@
               <outputDirectory>${outputDirectory}</outputDirectory>
               <offlineMode>false</offlineMode>
               <overwrite>false</overwrite>
-              <windupVersion>${windup.version}</windupVersion>
-              <forgeVersion>${forge.version}</forgeVersion>
+              <windupVersion>${version.windupcore}</windupVersion>
+              <forgeVersion>${version.forge}</forgeVersion>
           </configuration>
       </plugin>
 
