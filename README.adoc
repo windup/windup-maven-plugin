@@ -1,4 +1,4 @@
-=  Windup 2.x Maven Plugin
+=  Windup Maven Plugin
 
 == Overview
 
@@ -37,9 +37,8 @@ More examples will be provided as well the list of all atributes that can be use
 
 == Procedure to release the plugin
 
-```
-export REL=<new_version> ; export DEV=<snapshot-version>
-mvn versions:update-property -Dproperty=version.windup -DnewVersion=$REL
-git commit -m "updated version.windup to $REL" pom.xml
-mvn clean release:prepare release:perform -DdevelopmentVersion=$DEV -DreleaseVersion=$REL -Dtag=$REL
-```
+Run the release script with required version arguments like:
+
+----
+sh build/release.sh <release.version> <development.version>
+----
