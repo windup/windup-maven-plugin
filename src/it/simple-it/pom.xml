@@ -37,9 +37,12 @@
             <package>org.apache</package>
             <package>com.acme</package>
           </packages>
+          <targetTechnologies>
+            <target>eap:7</target>
+          </targetTechnologies>
           <inputDirectory>${inputDirectory}</inputDirectory>
           <outputDirectory>${outputDirectory}</outputDirectory>
-          <offlineMode>false</offlineMode>
+          <offlineMode>true</offlineMode>
           <overwrite>false</overwrite>
           <windupVersion>${version.windupcore}</windupVersion>
           <forgeVersion>${version.forge}</forgeVersion>
