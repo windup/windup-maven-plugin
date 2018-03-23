@@ -257,7 +257,7 @@ public class WindupMojo extends AbstractMojo
         GraphContextFactory graphContextFactory = addonRegistry.getServices(GraphContextFactory.class).get();
 
         Path graphPath = windupConfiguration.getOutputDirectory().resolve("graph");
-        try (GraphContext graphContext = graphContextFactory.create(graphPath))
+        try (GraphContext graphContext = graphContextFactory.create(graphPath, true))
         {
             windupConfiguration.setGraphContext(graphContext);
             windupProcessor.execute(windupConfiguration);
