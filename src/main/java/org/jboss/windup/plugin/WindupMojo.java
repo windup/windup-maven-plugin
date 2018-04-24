@@ -91,7 +91,7 @@ public class WindupMojo extends AbstractMojo
     /**
      * Location of the input file application.
      */
-    @Parameter( alias="input", property = "input", required = true, defaultValue = "${project.build.sourceDirectory}" )
+    @Parameter( alias="input", property = "input", required = true, defaultValue = "${project.basedir}/src/main" )
     private String inputDirectory;
 
     /**
