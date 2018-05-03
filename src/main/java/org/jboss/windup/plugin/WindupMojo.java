@@ -155,6 +155,8 @@ public class WindupMojo extends AbstractMojo
     @Parameter( alias="enableCompatibleFilesReport", property = "enableCompatibleFilesReport", required = false)
     private Boolean enableCompatibleFilesReport;
 
+    @Parameter( alias="windupHome", property = "windupHome", required = false)
+    private String windupHome;
 
     private static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
     private static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets";
@@ -162,7 +164,14 @@ public class WindupMojo extends AbstractMojo
 
     public void execute() throws MojoExecutionException
     {
-        System.setProperty(PathUtil.WINDUP_HOME, Paths.get(buildDirectory, "winduphome").toString());
+        // If the user specified a windup home, use it instead of the custom rules
+        boolean windupHomeSpecified = StringUtils.isNotBlank(this.windupHome);
+
+        if (windupHomeSpecified)
+            System.setProperty(PathUtil.WINDUP_HOME, windupHome);
+        else
+            System.setProperty(PathUtil.WINDUP_HOME, Paths.get(buildDirectory, "winduphome").toString());
+        System.out.println("WIndup HOme: " + System.getProperty(PathUtil.WINDUP_HOME));
 
         WindupConfiguration windupConfiguration = new WindupConfiguration();
 
@@ -192,9 +201,12 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, enableTattletale == Boolean.TRUE);
         windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
 
-        downloadAndUnzipRules();
-
-        windupConfiguration.addDefaultUserRulesDirectory(PathUtil.getWindupRulesDir());
+        // If they have specified a path to the windup home, then just use the rules from it instead of this process.
+        if (!windupHomeSpecified)
+        {
+            downloadAndUnzipRules();
+            windupConfiguration.addDefaultUserRulesDirectory(PathUtil.getWindupRulesDir());
+        }
 
         if (userRulesDirectory != null && !Files.isDirectory(Paths.get(userRulesDirectory)))
         {
