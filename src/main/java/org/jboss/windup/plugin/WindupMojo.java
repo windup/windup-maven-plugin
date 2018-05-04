@@ -171,7 +171,6 @@ public class WindupMojo extends AbstractMojo
             System.setProperty(PathUtil.WINDUP_HOME, windupHome);
         else
             System.setProperty(PathUtil.WINDUP_HOME, Paths.get(buildDirectory, "winduphome").toString());
-        System.out.println("WIndup HOme: " + System.getProperty(PathUtil.WINDUP_HOME));
 
         WindupConfiguration windupConfiguration = new WindupConfiguration();
 
@@ -205,8 +204,8 @@ public class WindupMojo extends AbstractMojo
         if (!windupHomeSpecified)
         {
             downloadAndUnzipRules();
-            windupConfiguration.addDefaultUserRulesDirectory(PathUtil.getWindupRulesDir());
         }
+        windupConfiguration.addDefaultUserRulesDirectory(PathUtil.getWindupRulesDir());
 
         if (userRulesDirectory != null && !Files.isDirectory(Paths.get(userRulesDirectory)))
         {
