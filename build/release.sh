@@ -17,7 +17,7 @@ cd windup-maven-plugin
 
 find . -name pom.xml -type f -exec sed -i -e "s/<version.windupcore>.*<\/version.windupcore>/<version.windupcore>$REL<\/version.windupcore>/g" {} \;
 git add -u && git commit -m "Updated version.windupcore property to $REL";
-mvn clean install release:prepare release:perform -DdevelopmentVersion=$DEV -DreleaseVersion=$REL -Dtag=$REL && \
+mvn clean install release:prepare release:perform -P jboss-release,gpg-sign -DdevelopmentVersion=$DEV -DreleaseVersion=$REL -Dtag=$REL && \
 find . -name pom.xml -type f -exec sed -i -e "s/<version.windupcore>.*<\/version.windupcore>/<version.windupcore>$DEV<\/version.windupcore>/g" {} \; && \
 git add -u && git commit -m "Updated version.windupcore property to $DEV";
 git push origin
