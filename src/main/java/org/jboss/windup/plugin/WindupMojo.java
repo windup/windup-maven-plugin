@@ -8,6 +8,7 @@
 package org.jboss.windup.plugin;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -18,6 +19,8 @@ import java.util.List;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -158,12 +161,58 @@ public class WindupMojo extends AbstractMojo
     @Parameter( alias="windupHome", property = "windupHome", required = false)
     private String windupHome;
 
+    @Parameter( required = false)
+    private String customLoggingPropertiesFile;
+
+
+
     private static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
     private static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets";
 
 
     public void execute() throws MojoExecutionException
     {
+
+
+        InputStream inputStream = null;
+
+        try
+        {
+
+
+            if (customLoggingPropertiesFile != null && !customLoggingPropertiesFile.equals(""))
+            {
+                try
+                {
+                    //use file path supplied in pom.xml plugin configuration
+                    inputStream = new FileInputStream(customLoggingPropertiesFile);
+                }
+                catch(IOException ioe)
+                {
+                    //not throwing exception allows the default packaged properties to be used if the specified file from pom can't be loaded
+                    Logger.getAnonymousLogger().severe("Could not load logging properties file specified in plugin configuration");
+                    Logger.getAnonymousLogger().severe(ioe.getMessage());
+                }
+            }
+
+            if (inputStream == null)
+            {
+                //use default file packaged with windup-maven-plugin at src/main/resources
+                inputStream = WindupMojo.class.getClassLoader().getResourceAsStream("logging.properties");
+            }
+
+            LogManager.getLogManager().readConfiguration(inputStream);
+            inputStream.close();
+
+        }
+        catch (final IOException e)
+        {
+            Logger.getAnonymousLogger().severe("Could not load any logging.properties file");
+            Logger.getAnonymousLogger().severe(e.getMessage());
+        }
+
+
+
         // If the user specified a windup home, use it instead of the custom rules
         boolean windupHomeSpecified = StringUtils.isNotBlank(this.windupHome);
 
