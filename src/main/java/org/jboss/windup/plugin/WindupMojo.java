@@ -97,6 +97,9 @@ public class WindupMojo extends AbstractMojo
     @Parameter( alias="input", property = "input", required = true, defaultValue = "${project.basedir}/src/main" )
     private String inputDirectory;
 
+    @Parameter( alias = "inputApplicationName", property = "inputApplicationName", required = false)
+    private String inputApplicationName;
+
     /**
      * Packages to be inspected by Windup.
      */
@@ -224,6 +227,9 @@ public class WindupMojo extends AbstractMojo
         WindupConfiguration windupConfiguration = new WindupConfiguration();
 
         windupConfiguration.addInputPath(Paths.get(inputDirectory));
+        if (this.inputApplicationName != null && this.inputApplicationName.trim().length() > 0)
+            windupConfiguration.addInputApplicationName(this.inputApplicationName);
+
         windupConfiguration.setOutputDirectory(Paths.get(outputDirectory));
 
         packages        = normalizePackages(packages);
