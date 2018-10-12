@@ -11,7 +11,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.windupcore>4.2.0.Alpha1</version.windupcore>
+    <version.windupcore>4.2.0-SNAPSHOT</version.windupcore>
     <version.forge>3.7.2.Final</version.forge>
     <inputDirectory>${project.basedir}/../../../</inputDirectory>
     <outputDirectory>${project.build.directory}/windup-report</outputDirectory>
