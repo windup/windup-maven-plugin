@@ -255,6 +255,33 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, enableTattletale == Boolean.TRUE);
         windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
 
+        //Set up windupVersion here to ensure consistency
+        Properties versions;
+        try
+        {
+            versions = loadVersions(VERSION_DEFINITIONS_FILE);
+        }
+        catch (IOException ex)
+        {
+            final String msg = "Can't load the version definitions from classpath: " + VERSION_DEFINITIONS_FILE;
+            throw new MojoExecutionException(msg, ex);
+        }
+
+        final String furnaceVersion = versions.getProperty("version.furnace");
+        if(furnaceVersion == null)
+            throw new MojoExecutionException("Internal error: Version of Furnace was not defined.");
+
+        final String forgeVersion = versions.getProperty("version.forge");
+        if(forgeVersion == null)
+            throw new MojoExecutionException("Internal error: Version of Forge was not defined.");
+
+        //windupVersion passed in via parameter takes precedence over that in version.properties file
+        final String windupVersion_ = versions.getProperty("version.windup");
+        if(null == this.windupVersion && null != windupVersion_)
+        this.windupVersion = windupVersion_;
+        if(null == this.windupVersion)
+            throw new MojoExecutionException("Internal error: Version of Windup which should be used was not defined.");
+
         // If they have specified a path to the windup home, then just use the rules from it instead of this process.
         if (!windupHomeSpecified)
         {
@@ -281,32 +308,6 @@ public class WindupMojo extends AbstractMojo
         	userIgnorePath = PathUtil.getWindupIgnoreDir().toString();
         windupConfiguration.addDefaultUserIgnorePath(Paths.get(userIgnorePath));
 
-
-        Properties versions;
-        try
-        {
-            versions = loadVersions(VERSION_DEFINITIONS_FILE);
-        }
-        catch (IOException ex)
-        {
-            final String msg = "Can't load the version definitions from classpath: " + VERSION_DEFINITIONS_FILE;
-            throw new MojoExecutionException(msg, ex);
-        }
-
-        final String furnaceVersion = versions.getProperty("version.furnace");
-        if(furnaceVersion == null)
-            throw new MojoExecutionException("Internal error: Version of Furnace was not defined.");
-
-        final String forgeVersion = versions.getProperty("version.forge");
-        if(forgeVersion == null)
-            throw new MojoExecutionException("Internal error: Version of Forge was not defined.");
-
-        final String windupVersion_ = versions.getProperty("version.windup");
-        if(null != windupVersion_)
-            this.windupVersion = windupVersion_;
-        if(null == this.windupVersion)
-            throw new MojoExecutionException("Internal error: Version of Windup which should be used was not defined.");
-
         Furnace furnace = createAndStartFurnace();
         install("org.jboss.forge.furnace.container:simple," + furnaceVersion, furnace); // :simple instead of :cdi
         install("org.jboss.forge.addon:core," + forgeVersion, furnace);
@@ -326,6 +327,11 @@ public class WindupMojo extends AbstractMojo
         try (GraphContext graphContext = graphContextFactory.create(graphPath, true))
         {
             windupConfiguration.setGraphContext(graphContext);
+            getLog().info(
+                    "\n\n=========================================================================================================================="
+                            + "\n\n    using Windup version: " + this.windupVersion
+                            + "\n\n==========================================================================================================================\n");
+
             windupProcessor.execute(windupConfiguration);
             getLog().info(
                 "\n\n=========================================================================================================================="
