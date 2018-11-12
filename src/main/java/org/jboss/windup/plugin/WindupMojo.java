@@ -137,7 +137,7 @@ public class WindupMojo extends AbstractMojo
     private List<String> sources;
 
     @Parameter( alias="targetTechnologies", property = "targetTechnologies", required = false)
-    private List<String> targets;
+    private List<String> targetTechnologies;
 
 
     @Parameter( alias="windupVersion", property = "windupVersion", required = false )
@@ -248,7 +248,7 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setOptionValue(IncludeTagsOption.NAME, includeTags);
         windupConfiguration.setOptionValue(ExcludeTagsOption.NAME, excludeTags);
         windupConfiguration.setOptionValue(SourceOption.NAME, sources);
-        windupConfiguration.setOptionValue(TargetOption.NAME, targets);
+        windupConfiguration.setOptionValue(TargetOption.NAME, targetTechnologies);
 
         windupConfiguration.setOptionValue(KeepWorkDirsOption.NAME, keepWorkDirs == Boolean.TRUE);
         windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, enableCompatibleFilesReport);
@@ -337,6 +337,7 @@ public class WindupMojo extends AbstractMojo
                 "\n\n=========================================================================================================================="
               + "\n\n    Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html"
               + "\n\n==========================================================================================================================\n");
+
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -466,5 +467,9 @@ public class WindupMojo extends AbstractMojo
         }
 
         return packages;
+    }
+
+    public String getWindupVersion() {
+        return this.windupVersion;
     }
 }
