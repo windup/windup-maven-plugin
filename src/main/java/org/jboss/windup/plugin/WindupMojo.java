@@ -34,6 +34,7 @@ import org.apache.maven.settings.Settings;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -81,6 +82,8 @@ public class WindupMojo extends AbstractMojo
 {
     private static final String VERSION_DEFINITIONS_FILE = "META-INF/versions.properties";
 
+    @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
+    private List<RemoteRepository> remoteRepos;
 
     @Parameter(defaultValue = "${project.build.directory}")
     private String buildDirectory;
@@ -356,6 +359,7 @@ public class WindupMojo extends AbstractMojo
         {
             windupRulesetsVersion = windupVersion;
         }
+        artifactRequest.setRepositories(remoteRepos);
         artifactRequest.setArtifact(new DefaultArtifact(WINDUP_RULES_GROUP_ID + ":" + WINDUP_RULES_ARTIFACT_ID + ":" + windupRulesetsVersion));
         try
         {

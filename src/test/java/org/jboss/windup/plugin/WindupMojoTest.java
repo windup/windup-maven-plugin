@@ -1,8 +1,14 @@
 package org.jboss.windup.plugin;
 
 
+import org.apache.maven.execution.DefaultMavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequest;
+import org.apache.maven.execution.MavenExecutionRequestPopulator;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.testing.AbstractMojoTestCase;
+import org.apache.maven.project.MavenProject;
+import org.apache.maven.project.ProjectBuilder;
+import org.apache.maven.project.ProjectBuildingRequest;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,8 +40,6 @@ public class WindupMojoTest extends AbstractMojoTestCase
         }
     }
 
-
-
     public void testNoWindupVersionParameter() throws Exception
     {
         File testPom = new File( getBasedir(),
@@ -57,12 +61,21 @@ public class WindupMojoTest extends AbstractMojoTestCase
                 "src/test/resources/mojoTestConfigWithWindupVersion.xml" );
         assertNotNull(testPom);
 
-        WindupMojo mojo2 = (WindupMojo)lookupMojo("windup", testPom);
+        MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
+        MavenExecutionRequestPopulator populator = getContainer().lookup( MavenExecutionRequestPopulator.class );
+        populator.populateDefaults(executionRequest);
+        executionRequest.setSystemProperties(System.getProperties());
+
+        ProjectBuildingRequest buildingRequest = executionRequest.getProjectBuildingRequest();
+        ProjectBuilder projectBuilder = this.lookup(ProjectBuilder.class);
+        MavenProject project = projectBuilder.build(testPom, buildingRequest).getProject();
+
+        WindupMojo mojo2 = (WindupMojo)lookupConfiguredMojo(project, "windup");
         assertNotNull( mojo2 );
         assertNotNull(mojo2.getWindupVersion());
         mojo2.execute();
 
 
-        assertEquals(mojo2.getWindupVersion(), "4.1.0-SNAPSHOT");
+        assertEquals(mojo2.getWindupVersion(), "4.2.0.Final");
     }
 }
