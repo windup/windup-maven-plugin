@@ -34,6 +34,7 @@ import org.apache.maven.settings.Settings;
 import org.eclipse.aether.DefaultRepositorySystemSession;
 import org.eclipse.aether.RepositorySystem;
 import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.repository.RemoteRepository;
 import org.eclipse.aether.resolution.ArtifactRequest;
 import org.eclipse.aether.resolution.ArtifactResolutionException;
 import org.eclipse.aether.resolution.ArtifactResult;
@@ -81,6 +82,8 @@ public class WindupMojo extends AbstractMojo
 {
     private static final String VERSION_DEFINITIONS_FILE = "META-INF/versions.properties";
 
+    @Parameter(defaultValue = "${project.remotePluginRepositories}", readonly = true)
+    private List<RemoteRepository> remoteRepos;
 
     @Parameter(defaultValue = "${project.build.directory}")
     private String buildDirectory;
@@ -137,7 +140,7 @@ public class WindupMojo extends AbstractMojo
     private List<String> sources;
 
     @Parameter( alias="targetTechnologies", property = "targetTechnologies", required = false)
-    private List<String> targets;
+    private List<String> targetTechnologies;
 
 
     @Parameter( alias="windupVersion", property = "windupVersion", required = false )
@@ -248,12 +251,39 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setOptionValue(IncludeTagsOption.NAME, includeTags);
         windupConfiguration.setOptionValue(ExcludeTagsOption.NAME, excludeTags);
         windupConfiguration.setOptionValue(SourceOption.NAME, sources);
-        windupConfiguration.setOptionValue(TargetOption.NAME, targets);
+        windupConfiguration.setOptionValue(TargetOption.NAME, targetTechnologies);
 
         windupConfiguration.setOptionValue(KeepWorkDirsOption.NAME, keepWorkDirs == Boolean.TRUE);
         windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, enableCompatibleFilesReport);
         windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, enableTattletale == Boolean.TRUE);
         windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
+
+        //Set up windupVersion here to ensure consistency
+        Properties versions;
+        try
+        {
+            versions = loadVersions(VERSION_DEFINITIONS_FILE);
+        }
+        catch (IOException ex)
+        {
+            final String msg = "Can't load the version definitions from classpath: " + VERSION_DEFINITIONS_FILE;
+            throw new MojoExecutionException(msg, ex);
+        }
+
+        final String furnaceVersion = versions.getProperty("version.furnace");
+        if(furnaceVersion == null)
+            throw new MojoExecutionException("Internal error: Version of Furnace was not defined.");
+
+        final String forgeVersion = versions.getProperty("version.forge");
+        if(forgeVersion == null)
+            throw new MojoExecutionException("Internal error: Version of Forge was not defined.");
+
+        //windupVersion passed in via parameter takes precedence over that in version.properties file
+        final String windupVersion_ = versions.getProperty("version.windup");
+        if(null == this.windupVersion && null != windupVersion_)
+        this.windupVersion = windupVersion_;
+        if(null == this.windupVersion)
+            throw new MojoExecutionException("Internal error: Version of Windup which should be used was not defined.");
 
         // If they have specified a path to the windup home, then just use the rules from it instead of this process.
         if (!windupHomeSpecified)
@@ -281,32 +311,6 @@ public class WindupMojo extends AbstractMojo
         	userIgnorePath = PathUtil.getWindupIgnoreDir().toString();
         windupConfiguration.addDefaultUserIgnorePath(Paths.get(userIgnorePath));
 
-
-        Properties versions;
-        try
-        {
-            versions = loadVersions(VERSION_DEFINITIONS_FILE);
-        }
-        catch (IOException ex)
-        {
-            final String msg = "Can't load the version definitions from classpath: " + VERSION_DEFINITIONS_FILE;
-            throw new MojoExecutionException(msg, ex);
-        }
-
-        final String furnaceVersion = versions.getProperty("version.furnace");
-        if(furnaceVersion == null)
-            throw new MojoExecutionException("Internal error: Version of Furnace was not defined.");
-
-        final String forgeVersion = versions.getProperty("version.forge");
-        if(forgeVersion == null)
-            throw new MojoExecutionException("Internal error: Version of Forge was not defined.");
-
-        final String windupVersion_ = versions.getProperty("version.windup");
-        if(null != windupVersion_)
-            this.windupVersion = windupVersion_;
-        if(null == this.windupVersion)
-            throw new MojoExecutionException("Internal error: Version of Windup which should be used was not defined.");
-
         Furnace furnace = createAndStartFurnace();
         install("org.jboss.forge.furnace.container:simple," + furnaceVersion, furnace); // :simple instead of :cdi
         install("org.jboss.forge.addon:core," + forgeVersion, furnace);
@@ -326,11 +330,17 @@ public class WindupMojo extends AbstractMojo
         try (GraphContext graphContext = graphContextFactory.create(graphPath, true))
         {
             windupConfiguration.setGraphContext(graphContext);
+            getLog().info(
+                    "\n\n=========================================================================================================================="
+                            + "\n\n    using Windup version: " + this.windupVersion
+                            + "\n\n==========================================================================================================================\n");
+
             windupProcessor.execute(windupConfiguration);
             getLog().info(
                 "\n\n=========================================================================================================================="
               + "\n\n    Windup report created: " + windupConfiguration.getOutputDirectory().toAbsolutePath() + "/index.html"
               + "\n\n==========================================================================================================================\n");
+
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -349,6 +359,7 @@ public class WindupMojo extends AbstractMojo
         {
             windupRulesetsVersion = windupVersion;
         }
+        artifactRequest.setRepositories(remoteRepos);
         artifactRequest.setArtifact(new DefaultArtifact(WINDUP_RULES_GROUP_ID + ":" + WINDUP_RULES_ARTIFACT_ID + ":" + windupRulesetsVersion));
         try
         {
@@ -460,5 +471,9 @@ public class WindupMojo extends AbstractMojo
         }
 
         return packages;
+    }
+
+    public String getWindupVersion() {
+        return this.windupVersion;
     }
 }
