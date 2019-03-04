@@ -35,6 +35,12 @@ An example showing how to use the plugin can be found https://github.com/windup/
 
 More examples will be provided as well the list of all atributes that can be used by the plugin.
 
+NOTE: In order to run it on JDK 11, you first need to set the MAVEN_OPTS on the command line to load the *java.se* module
+----
+export MAVEN_OPTS="--add-modules=java.se"
+----
+
+
 == Procedure to release the plugin
 
 Run the release script with required version arguments like:
