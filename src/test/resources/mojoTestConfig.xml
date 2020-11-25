@@ -4,7 +4,7 @@
             <plugin>
                 <groupId>org.jboss.windup.plugin</groupId>
                 <artifactId>windup-maven-plugin</artifactId>
-                <version>5.1.0-SNAPSHOT</version>
+                <version>5.1.0.Beta1</version>
                 <executions>
                     <execution>
                         <id>run-windup</id>
