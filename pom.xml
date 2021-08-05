@@ -10,7 +10,7 @@
 
     <groupId>org.jboss.windup.plugin</groupId>
     <artifactId>windup-maven-plugin</artifactId>
-    <version>5.2.0.Final</version>
+    <version>5.2.1-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
 
     <name>Windup Maven Plugin</name>
@@ -29,7 +29,7 @@
    </prerequisites>
    
     <scm>
-        <tag>5.2.0.Final</tag>
+        <tag>master</tag>
         <url>http://github.com/windup/windup-maven-plugin</url>
         <connection>scm:git:https://github.com/windup/windup-maven-plugin.git</connection>
         <developerConnection>scm:git:git@github.com:windup/windup-maven-plugin.git</developerConnection>
