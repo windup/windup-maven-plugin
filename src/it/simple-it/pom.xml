@@ -45,6 +45,7 @@
           <offlineMode>true</offlineMode>
           <overwrite>false</overwrite>
           <windupVersion>${version.windupcore}</windupVersion>
+          <analyzeKnownLibraries>false</analyzeKnownLibraries>
         </configuration>
       </plugin>
 
