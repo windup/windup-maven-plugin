@@ -170,6 +170,9 @@ public class WindupMojo extends AbstractMojo
     @Parameter( required = false)
     private String customLoggingPropertiesFile;
 
+    @Parameter(alias = "analyzeKnownLibraries", property = "analyzeKnownLibraries", required = false)
+    private Boolean analyzeKnownLibraries;
+
 
 
     private static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
