@@ -52,6 +52,7 @@ import org.jboss.forge.furnace.se.FurnaceFactory;
 import org.jboss.forge.furnace.versions.SingleVersion;
 import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
+import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
 import org.jboss.windup.config.KeepWorkDirsOption;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
@@ -170,6 +171,9 @@ public class WindupMojo extends AbstractMojo
     @Parameter( required = false)
     private String customLoggingPropertiesFile;
 
+    @Parameter(alias = "analyzeKnownLibraries", property = "analyzeKnownLibraries", required = false)
+    private Boolean analyzeKnownLibraries;
+
 
 
     private static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
@@ -257,6 +261,8 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setOptionValue(EnableCompatibleFilesReportOption.NAME, enableCompatibleFilesReport);
         windupConfiguration.setOptionValue(EnableTattletaleReportOption.NAME, enableTattletale == Boolean.TRUE);
         windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
+
+        windupConfiguration.setOptionValue(AnalyzeKnownLibrariesOption.NAME, analyzeKnownLibraries == Boolean.TRUE);
 
         //Set up windupVersion here to ensure consistency
         Properties versions;
