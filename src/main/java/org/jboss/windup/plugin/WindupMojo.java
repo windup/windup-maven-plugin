@@ -64,6 +64,7 @@ import org.jboss.windup.exec.configuration.options.SourceOption;
 import org.jboss.windup.exec.configuration.options.TargetOption;
 import org.jboss.windup.graph.GraphContext;
 import org.jboss.windup.graph.GraphContextFactory;
+import org.jboss.windup.rules.apps.diva.EnableTransactionAnalysisOption;
 import org.jboss.windup.rules.apps.java.config.ExcludePackagesOption;
 import org.jboss.windup.rules.apps.java.config.ScanPackagesOption;
 import org.jboss.windup.rules.apps.java.config.SourceModeOption;
@@ -174,6 +175,9 @@ public class WindupMojo extends AbstractMojo
     @Parameter(alias = "analyzeKnownLibraries", property = "analyzeKnownLibraries", required = false)
     private Boolean analyzeKnownLibraries;
 
+    @Parameter(alias = "enableTransactionAnalysis", property = "enableTransactionAnalysis", required = false)
+    private Boolean enableTransactionAnalysis;
+
 
 
     private static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
@@ -263,6 +267,7 @@ public class WindupMojo extends AbstractMojo
         windupConfiguration.setExportingCSV(exportCSV == Boolean.TRUE);
 
         windupConfiguration.setOptionValue(AnalyzeKnownLibrariesOption.NAME, analyzeKnownLibraries == Boolean.TRUE);
+        windupConfiguration.setOptionValue(EnableTransactionAnalysisOption.NAME, enableTransactionAnalysis == Boolean.TRUE);
 
         //Set up windupVersion here to ensure consistency
         Properties versions;
