@@ -93,7 +93,7 @@
             </dependency>
             <dependency>
                 <groupId>org.jboss.windup.rules</groupId>
-                <artifactId>windup-rulesets</artifactId>
+                <artifactId>windup-rulesets-parent</artifactId>
                 <version>${version.windup-rulesets}</version>
             </dependency>
         </dependencies>
@@ -144,7 +144,7 @@
         <!-- But it isn't. The needed rest is referenced as deps in bootstrap. -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
-            <artifactId>windup-bootstrap</artifactId>
+            <artifactId>windup-bootstrap-windup</artifactId>
         </dependency>
 
         <!-- Rules and data -->
@@ -156,7 +156,8 @@
 
         <dependency>
             <groupId>org.jboss.windup.rules</groupId>
-            <artifactId>windup-rulesets</artifactId>
+            <artifactId>windup-rulesets-windup</artifactId>
+            <version>${version.windup-rulesets}</version>
         </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
