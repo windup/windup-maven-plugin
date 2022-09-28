@@ -21,7 +21,7 @@
                     <targetTechnologies>
                         <target>eap:7</target>
                     </targetTechnologies>
-                    <inputDirectory>src/main/java</inputDirectory>
+                    <inputDirectory>src/test/java</inputDirectory>
                     <outputDirectory>target</outputDirectory>
                     <offlineMode>true</offlineMode>
                     <overwrite>false</overwrite>
