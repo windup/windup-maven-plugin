@@ -78,10 +78,6 @@
         </repository>
     </distributionManagement>
 
-    <modules>
-        <module>windup-plugin</module>
-    </modules>
-
     <build>
         <pluginManagement>
             <plugins>
@@ -283,6 +279,29 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>windup</id>
+            <activation>
+                <property>
+                    <name>!skipThemeWindup</name>
+                </property>
+            </activation>
+            <modules>
+                <module>windup-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>mtr</id>
+            <modules>
+                <module>mtr-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>mta</id>
+            <modules>
+                <module>mta-plugin</module>
+            </modules>
         </profile>
     </profiles>
 </project>
