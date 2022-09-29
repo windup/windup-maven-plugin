@@ -24,4 +24,4 @@ jobs:
         distribution: ${{ matrix.jdk-distribution }}
         cache: 'maven'
     - name: Maven build
-      run: mvn clean install -B
+      run: mvn clean install -B -s build/settings.xml
