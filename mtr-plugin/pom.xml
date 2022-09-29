@@ -15,7 +15,7 @@
         <dependency>
             <groupId>org.jboss.windup.plugin</groupId>
             <artifactId>windup-maven-plugin-base</artifactId>
-            <version>${project.version}</version>
+            <version>${version.maven-plugin-base}</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.jboss.windup</groupId>
@@ -54,7 +54,7 @@
                                  <artifactItem>
                                     <groupId>org.jboss.windup.plugin</groupId>
                                     <artifactId>windup-maven-plugin-base</artifactId>
-                                    <version>${project.version}</version>
+                                    <version>${version.maven-plugin-base}</version>
                                     <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                                     <includes>**/*.class, META-INF/beans.xml, **/*.properties</includes>
                                  </artifactItem>

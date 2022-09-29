@@ -76,6 +76,7 @@
 
         <version.windupcore>6.0.1-SNAPSHOT</version.windupcore>
         <version.windup-rulesets>6.0.1-SNAPSHOT</version.windup-rulesets>
+        <version.maven-plugin-base>6.0.1-SNAPSHOT</version.maven-plugin-base>
         <!-- For now, we need to pass this to the Mojo explicitly (through META-INF/versions.properties),
              but it should be possible to figure that out from the Windup POM. -->
         <version.forge>3.10.0.Final</version.forge>
