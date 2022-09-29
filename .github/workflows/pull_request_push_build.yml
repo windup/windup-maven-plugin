@@ -1,0 +1,27 @@
+name: Windup PR builder
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ master ]
+
+jobs:
+  windup-build:
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk-distribution: [ adopt, temurin ]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3.0.2
+    - name: Set up JDK 11
+      uses: actions/setup-java@v3.3.0
+      with:
+        java-version: '11'
+        distribution: ${{ matrix.jdk-distribution }}
+        cache: 'maven'
+    - name: Maven build
+      run: mvn clean install -B -s .github/build/settings.xml
