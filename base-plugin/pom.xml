@@ -53,7 +53,7 @@
             <classifier>forge-addon</classifier>
         </dependency>
         <!-- But it isn't. The needed rest is referenced as deps in bootstrap. -->
-        <!-- desperate times call for desperate measures: -->
+        <!-- desperate times call for desperate measures -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-bootstrap-windup</artifactId>
@@ -74,9 +74,20 @@
             <type>zip</type>
         </dependency>
 
+        <!-- desperate times call for desperate measures -->
         <dependency>
             <groupId>org.jboss.windup.rules</groupId>
             <artifactId>windup-rulesets-windup</artifactId>
+            <version>${version.windup-rulesets}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules</groupId>
+            <artifactId>windup-rulesets-mtr</artifactId>
+            <version>${version.windup-rulesets}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.windup.rules</groupId>
+            <artifactId>windup-rulesets-mta</artifactId>
             <version>${version.windup-rulesets}</version>
         </dependency>
         <dependency>
