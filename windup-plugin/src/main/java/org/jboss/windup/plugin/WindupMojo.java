@@ -181,7 +181,7 @@ public class WindupMojo extends AbstractMojo
 
 
     private static final String WINDUP_RULES_GROUP_ID = "org.jboss.windup.rules";
-    private static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets";
+    private static final String WINDUP_RULES_ARTIFACT_ID = "windup-rulesets-windup";
 
 
     public void execute() throws MojoExecutionException
