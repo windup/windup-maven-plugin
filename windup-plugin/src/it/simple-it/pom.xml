@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.jboss.windup.plugin.it</groupId>
+  <artifactId>simple-it</artifactId>
+  <version>6.0.1-SNAPSHOT</version>
+
+  <description>A simple IT verifying the basic use case.</description>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <version.windupcore>6.0.1-SNAPSHOT</version.windupcore>
+    <version.forge>3.7.2.Final</version.forge>
+    <inputDirectory>${project.basedir}/../../../</inputDirectory>
+    <outputDirectory>${project.build.directory}/windup-report</outputDirectory>
+  </properties>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.jboss.windup.plugin</groupId>
+        <artifactId>windup-maven-plugin</artifactId>
+        <version>6.0.1-SNAPSHOT</version>
+        <executions>
+          <execution>
+            <id>run-windup</id>
+            <phase>package</phase>
+            <goals>
+              <goal>windup</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <packages>
+            <package>org.apache</package>
+            <package>com.acme</package>
+          </packages>
+          <targetTechnologies>
+            <target>eap:7</target>
+          </targetTechnologies>
+          <inputDirectory>${inputDirectory}</inputDirectory>
+          <outputDirectory>${outputDirectory}</outputDirectory>
+          <offlineMode>true</offlineMode>
+          <overwrite>false</overwrite>
+          <windupVersion>${version.windupcore}</windupVersion>
+          <analyzeKnownLibraries>false</analyzeKnownLibraries>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

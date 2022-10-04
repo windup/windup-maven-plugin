@@ -9,11 +9,24 @@
     </parent>
 
     <groupId>org.jboss.windup.plugin</groupId>
-    <artifactId>windup-maven-plugin</artifactId>
+    <artifactId>windup-maven-plugin-parent</artifactId>
     <version>6.0.1-SNAPSHOT</version>
-    <packaging>maven-plugin</packaging>
+    <packaging>pom</packaging>
 
-    <name>Windup Maven Plugin</name>
+    <name>Windup Maven Plugin - Parent</name>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+
+        <version.windupcore>6.0.1-SNAPSHOT</version.windupcore>
+        <version.windup-rulesets>6.0.1-SNAPSHOT</version.windup-rulesets>
+        <!-- For now, we need to pass this to the Mojo explicitly (through META-INF/versions.properties),
+             but it should be possible to figure that out from the Windup POM. -->
+        <version.forge>3.10.0.Final</version.forge>
+        <version.furnace>2.29.1.Final</version.furnace>
+    </properties>
 
     <url>http://windup.jboss.org</url>
 
@@ -24,10 +37,6 @@
         </license>
     </licenses>
     
-   <prerequisites>
-      <maven>3.2</maven>
-   </prerequisites>
-   
     <scm>
         <tag>master</tag>
         <url>http://github.com/windup/windup-maven-plugin</url>
@@ -68,19 +77,17 @@
             <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
         </repository>
     </distributionManagement>
-    
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.source>11</maven.compiler.source>
 
-        <version.windupcore>6.0.1-SNAPSHOT</version.windupcore>
-        <version.windup-rulesets>6.0.1-SNAPSHOT</version.windup-rulesets>
-        <!-- For now, we need to pass this to the Mojo explicitly (through META-INF/versions.properties),
-             but it should be possible to figure that out from the Windup POM. -->
-        <version.forge>3.10.0.Final</version.forge>
-        <version.furnace>2.29.1.Final</version.furnace>
-    </properties>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-plugin-plugin</artifactId>
+                    <version>3.6.0</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
 
     <dependencyManagement>
         <dependencies>
@@ -90,11 +97,6 @@
                 <version>${version.windupcore}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.jboss.windup.rules</groupId>
-                <artifactId>windup-rulesets</artifactId>
-                <version>${version.windup-rulesets}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
@@ -123,28 +125,20 @@
             <artifactId>plexus-utils</artifactId>
             <version>3.4.1</version>
         </dependency>
-        <!-- Logging and tests -->
-        <dependency>
+            <!-- Logging and tests -->
+            <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
 
-
-
         <!-- Windup dependencies -->
-
         <!-- This should be the addon which contains all the core Windup dependencies you need to run Windup. -->
         <dependency>
             <groupId>org.jboss.windup</groupId>
             <artifactId>windup-tooling</artifactId>
             <classifier>forge-addon</classifier>
-        </dependency>
-        <!-- But it isn't. The needed rest is referenced as deps in bootstrap. -->
-        <dependency>
-            <groupId>org.jboss.windup</groupId>
-            <artifactId>windup-bootstrap</artifactId>
         </dependency>
 
         <!-- Rules and data -->
@@ -154,10 +148,6 @@
             <type>zip</type>
         </dependency>
 
-        <dependency>
-            <groupId>org.jboss.windup.rules</groupId>
-            <artifactId>windup-rulesets</artifactId>
-        </dependency>
         <dependency>
             <groupId>org.jboss.windup.rules.apps</groupId>
             <artifactId>windup-rules-java-project</artifactId>
@@ -173,8 +163,8 @@
 
 
 
-        <!-- Furnace -->
-        <dependency>
+            <!-- Furnace -->
+            <dependency>
             <groupId>org.jboss.forge.furnace</groupId>
             <artifactId>furnace-se</artifactId>
         </dependency>
@@ -189,8 +179,8 @@
             <classifier>forge-addon</classifier>
         </dependency>
 
-        <!-- Forge -->
-        <dependency>
+            <!-- Forge -->
+            <dependency>
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>core</artifactId>
             <classifier>forge-addon</classifier>
@@ -223,65 +213,50 @@
         </dependency>
     </dependencies>
 
-    <build>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-plugin-plugin</artifactId>
-                <version>3.6.0</version>
-                <configuration>
-                    <goalPrefix>windup</goalPrefix>
-                    <skipErrorNoDescriptorsFound>true</skipErrorNoDescriptorsFound>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>mojo-descriptor</id>
-                        <goals>
-                            <goal>descriptor</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
-
     <profiles>
         <profile>
             <id>run-integration-test</id>
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <artifactId>maven-invoker-plugin</artifactId>
+                            <version>1.10</version>
+                            <configuration>
+                                <debug>true</debug>
+                                <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                                <pomIncludes>
+                                    <pomInclude>*/pom.xml</pomInclude>
+                                </pomIncludes>
+                                <postBuildHookScript>verify</postBuildHookScript>
+                                <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
+                                <settingsFile>src/it/settings.xml</settingsFile>
+                                <goals>
+                                    <goal>clean</goal>
+                                    <goal>test-compile</goal>
+                                </goals>
+                            </configuration>
+                            <executions>
+                                <execution>
+                                    <id>integration-test</id>
+                                    <goals>
+                                        <goal>install</goal>
+                                        <goal>integration-test</goal>
+                                        <goal>verify</goal>
+                                    </goals>
+                                </execution>
+                            </executions>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
                 <plugins>
                     <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-invoker-plugin</artifactId>
-                        <version>1.10</version>
-                        <configuration>
-                            <debug>true</debug>
-                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
-                            <pomIncludes>
-                                <pomInclude>*/pom.xml</pomInclude>
-                            </pomIncludes>
-                            <postBuildHookScript>verify</postBuildHookScript>
-                            <localRepositoryPath>${project.build.directory}/local-repo</localRepositoryPath>
-                            <settingsFile>src/it/settings.xml</settingsFile>
-                            <goals>
-                                <goal>clean</goal>
-                                <goal>test-compile</goal>
-                            </goals>
-                        </configuration>
+                        <inherited>false</inherited>
                         <executions>
                             <execution>
                                 <id>integration-test</id>
-                                <goals>
-                                    <goal>install</goal>
-                                    <goal>integration-test</goal>
-                                    <goal>verify</goal>
-                                </goals>
+                                <phase/>
                             </execution>
                         </executions>
                     </plugin>
@@ -304,6 +279,29 @@
                     </plugin>
                 </plugins>
             </build>
+        </profile>
+        <profile>
+            <id>windup</id>
+            <activation>
+                <property>
+                    <name>!skipThemeWindup</name>
+                </property>
+            </activation>
+            <modules>
+                <module>windup-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>mtr</id>
+            <modules>
+                <module>mtr-plugin</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>mta</id>
+            <modules>
+                <module>mta-plugin</module>
+            </modules>
         </profile>
     </profiles>
 </project>
