@@ -184,12 +184,6 @@
             <groupId>org.jboss.forge.addon</groupId>
             <artifactId>core</artifactId>
             <classifier>forge-addon</classifier>
-            <exclusions>
-                <exclusion>
-                    <groupId>dom4j</groupId>
-                    <artifactId>dom4j</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <dependency>
