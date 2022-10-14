@@ -25,7 +25,8 @@ jobs:
         run: mvn -B clean install -DskipTests
 
   windup-maven-plugin:
-    runs-on: ${{ matrix.os }}
+    needs: [windup-build]
+    runs-on: ubuntu-latest
     steps:
     - name: Checkout code
       uses: actions/checkout@v3.0.2
