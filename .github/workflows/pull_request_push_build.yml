@@ -8,11 +8,23 @@ on:
 
 jobs:
   windup-build:
-    strategy:
-      fail-fast: false
-      matrix:
-        jdk-distribution: [ adopt, temurin ]
-        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2.3.4
+        with:
+          repository: windup/windup
+      - name: Set up JDK 11
+        uses: actions/checkout@v3.0.2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          java-package: jdk
+          cache: 'maven'
+      - name: Build on JDK 11
+        run: mvn -B clean install -DskipTests
+
+  windup-maven-plugin:
     runs-on: ${{ matrix.os }}
     steps:
     - name: Checkout code
@@ -21,7 +33,7 @@ jobs:
       uses: actions/setup-java@v3.3.0
       with:
         java-version: '11'
-        distribution: ${{ matrix.jdk-distribution }}
+        distribution: 'temurin'
         cache: 'maven'
     - name: Maven build
       run: mvn clean install -B -s build/settings.xml -Dorg.apache.maven.user-settings=build/settings.xml
