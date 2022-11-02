@@ -10,7 +10,7 @@
 
     <groupId>org.jboss.windup.plugin</groupId>
     <artifactId>windup-maven-plugin-parent</artifactId>
-    <version>6.1.0.Final</version>
+    <version>6.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Windup Maven Plugin - Parent</name>
