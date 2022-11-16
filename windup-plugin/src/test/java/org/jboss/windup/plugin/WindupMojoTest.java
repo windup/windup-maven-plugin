@@ -76,6 +76,6 @@ public class WindupMojoTest extends AbstractMojoTestCase
         mojo2.execute();
 
 
-        assertEquals(mojo2.getWindupVersion(), "6.1.1-SNAPSHOT");
+        assertEquals(mojo2.getWindupVersion(), "6.2.0-SNAPSHOT");
     }
 }
