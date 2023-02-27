@@ -33,7 +33,7 @@
                     <outputDirectory>target</outputDirectory>
                     <offlineMode>true</offlineMode>
                     <overwrite>false</overwrite>
-                    <windupVersion>6.1.3-SNAPSHOT</windupVersion>
+                    <windupVersion>6.1.3.Final</windupVersion>
                 </configuration>
             </plugin>
         </plugins>

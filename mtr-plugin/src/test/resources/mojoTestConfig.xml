@@ -4,7 +4,7 @@
             <plugin>
                 <groupId>org.jboss.windup.plugin</groupId>
                 <artifactId>mtr-maven-plugin</artifactId>
-                <version>6.1.3-SNAPSHOT</version>
+                <version>6.1.3.Final</version>
                 <executions>
                     <execution>
                         <id>run-windup</id>
