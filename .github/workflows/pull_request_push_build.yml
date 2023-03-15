@@ -30,7 +30,7 @@ jobs:
           restore-keys:
             maven-windup-build
       - name: Build on JDK 11
-        run: mvn -B clean install -DskipTests
+        run: mvn -B clean install -DskipTests -Dmaven.repo.local=.m2
 
   windup-rulesets-build:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
           restore-keys: |
             maven-windup-build-${{ github.sha }}
       - name: Build for the windup-maven-plugin-build
-        run: mvn clean install -nsu -DskipTests
+        run: mvn clean install -nsu -DskipTests -Dmaven.repo.local=.m2
 
   windup-maven-plugin-build:
     strategy:
@@ -83,4 +83,4 @@ jobs:
         restore-keys: |
           maven-windup-rulesets-build-${{ github.sha }}
     - name: Maven build
-      run: mvn clean install -B -s build/settings.xml -Dorg.apache.maven.user-settings=build/settings.xml
+      run: mvn clean install -B -s build/settings.xml -D"org.apache.maven.user-settings=build/settings.xml" -D"maven.repo.local=.m2"
