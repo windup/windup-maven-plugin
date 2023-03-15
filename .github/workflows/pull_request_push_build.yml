@@ -74,6 +74,7 @@ jobs:
       with:
         java-version: ${{ matrix.java-version }}
         distribution: ${{ matrix.jdk-distribution }}
+        java-package: jdk
     - name: Cache local Maven repository
       uses: actions/cache@v3
       with:
@@ -83,4 +84,36 @@ jobs:
         restore-keys: |
           maven-windup-rulesets-build-${{ github.sha }}
     - name: Maven build
-      run: mvn clean install -B -s build/settings.xml -D"maven.repo.local=.m2"
+      run: mvn clean install -B -D"maven.repo.local=.m2"
+
+  windup-maven-plugin-build-tmp:
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Checkout windup project
+        uses: actions/checkout@v3
+        with:
+          repository: windup/windup
+          ref: ${{ github.base_ref }}
+          path: windup
+      - name: Checkout windup-rulesets project
+        uses: actions/checkout@v3
+        with:
+          repository: windup/windup-rulesets
+          ref: ${{ github.base_ref }}
+          path: windup-rulesets
+      - name: Checkout PR code
+        uses: actions/checkout@v3
+        with:
+          path: windup-maven-plugin
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: 'maven'
+      - name: Build Windup dependencies
+        run: |
+          mvn install -DskipTests -f windup
+          mvn install -DskipTests -f windup-rulesets
+      - name: Maven build
+        run: mvn clean install -B -f windup-maven-plugin
