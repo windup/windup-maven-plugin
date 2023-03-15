@@ -87,7 +87,13 @@ jobs:
       run: mvn clean install -B -D"maven.repo.local=.m2"
 
   windup-maven-plugin-build-tmp:
-    runs-on: 'ubuntu-latest'
+    strategy:
+      fail-fast: false
+      matrix:
+        jdk-distribution: [ temurin ]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        java-version: [ 11, 17 ]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout windup project
         uses: actions/checkout@v3
@@ -105,11 +111,11 @@ jobs:
         uses: actions/checkout@v3
         with:
           path: windup-maven-plugin
-      - name: Set up JDK 11
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
-          java-version: '11'
-          distribution: 'temurin'
+          java-version: ${{ matrix.java-version }}
+          distribution: ${{ matrix.jdk-distribution }}
           cache: 'maven'
       - name: Build Windup dependencies
         run: |
