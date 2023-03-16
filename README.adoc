@@ -33,11 +33,16 @@ mvn clean install
 
 An example showing how to use the plugin can be found https://github.com/windup/windup-maven-plugin/blob/master/src/it/simple-it/pom.xml[here].
 
-More examples will be provided as well the list of all atributes that can be used by the plugin.
+More examples will be provided as well the list of all attributes that can be used by the plugin.
 
-NOTE: In order to run it on JDK 11, you first need to set the MAVEN_OPTS on the command line to load the *java.se* module
+NOTE: In order to run it on JDK 11, you first need to set the MAVEN_OPTS on the command line to load the *java.se* module running:
 ----
 export MAVEN_OPTS="--add-modules=java.se"
+----
+
+NOTE: In order to run it on JDK 17, you first need to set the MAVEN_OPTS on the command line running:
+----
+export MAVEN_OPTS="--add-modules=java.se  --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.stream=ALL-UNNAMED"
 ----
 
 
