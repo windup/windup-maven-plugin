@@ -2,26 +2,48 @@ name: Windup PR builder
 
 on:
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - 'releases/**'
   push:
     branches: [ master ]
 
 jobs:
-  windup-build:
+
+  windup-maven-plugin-build:
     strategy:
       fail-fast: false
       matrix:
-        jdk-distribution: [ adopt, temurin ]
+        jdk-distribution: [ temurin ]
         os: [ubuntu-latest, windows-latest, macos-latest]
+        java-version: [ 11, 17 ]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3.0.2
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3.3.0
-      with:
-        java-version: '11'
-        distribution: ${{ matrix.jdk-distribution }}
-        cache: 'maven'
-    - name: Maven build
-      run: mvn clean install -B -s build/settings.xml -Dorg.apache.maven.user-settings=build/settings.xml
+      - name: Checkout windup project
+        uses: actions/checkout@v3
+        with:
+          repository: windup/windup
+          ref: ${{ github.base_ref }}
+          path: windup
+      - name: Checkout windup-rulesets project
+        uses: actions/checkout@v3
+        with:
+          repository: windup/windup-rulesets
+          ref: ${{ github.base_ref }}
+          path: windup-rulesets
+      - name: Checkout PR code
+        uses: actions/checkout@v3
+        with:
+          path: windup-maven-plugin
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: ${{ matrix.java-version }}
+          distribution: ${{ matrix.jdk-distribution }}
+          cache: 'maven'
+      - name: Build Windup dependencies
+        run: |
+          mvn install -DskipTests -f windup
+          mvn install -DskipTests -f windup-rulesets
+      - name: Maven build
+        run: mvn clean install -B -f windup-maven-plugin

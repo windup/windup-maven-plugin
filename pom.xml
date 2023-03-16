@@ -83,7 +83,7 @@
             <plugins>
                 <plugin>
                     <artifactId>maven-plugin-plugin</artifactId>
-                    <version>3.6.0</version>
+                    <version>3.8.1</version>
                 </plugin>
             </plugins>
         </pluginManagement>
@@ -107,17 +107,17 @@
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-plugin-api</artifactId>
-            <version>3.8.1</version>
+            <version>3.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
-            <version>3.8.1</version>
+            <version>3.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.maven.plugin-tools</groupId>
             <artifactId>maven-plugin-annotations</artifactId>
-            <version>3.6.2</version>
+            <version>3.8.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -279,8 +279,9 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
+                        <version>3.0.0</version>
                         <configuration>
-                            <argLine>--add-modules=java.se</argLine>
+                            <argLine>--add-modules=java.se --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.util=ALL-UNNAMED --add-opens java.base/java.util.stream=ALL-UNNAMED</argLine>
                         </configuration>
                     </plugin>
                 </plugins>
