@@ -2,91 +2,15 @@ name: Windup PR builder
 
 on:
   pull_request:
-    branches: [ master ]
+    branches:
+      - master
+      - 'releases/**'
   push:
     branches: [ master ]
 
 jobs:
 
-  windup-build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          repository: windup/windup
-          ref: ${{ github.base_ref }}
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          java-package: jdk
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
-        with:
-          path: .m2
-          key: maven-windup-build-${{ github.sha }}
-          restore-keys:
-            maven-windup-build
-      - name: Build on JDK 11
-        run: mvn -B clean install -DskipTests -Dmaven.repo.local=.m2
-
-  windup-rulesets-build:
-    runs-on: ubuntu-latest
-    needs: [windup-build]
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-        with:
-          repository: windup/windup-rulesets
-          ref: ${{ github.base_ref }}
-      - name: Set up JDK 11
-        uses: actions/setup-java@v3
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-          java-package: jdk
-      - name: Cache local Maven repository
-        uses: actions/cache@v3
-        with:
-          path: .m2
-          key: maven-windup-rulesets-build-${{ github.sha }}
-          restore-keys: |
-            maven-windup-build-${{ github.sha }}
-      - name: Build for the windup-maven-plugin-build
-        run: mvn clean install -nsu -DskipTests -Dmaven.repo.local=.m2
-
   windup-maven-plugin-build:
-    strategy:
-      fail-fast: false
-      matrix:
-        jdk-distribution: [ temurin ]
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        java-version: [ 11, 17 ]
-    runs-on: ${{ matrix.os }}
-    needs: [windup-rulesets-build]
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        java-version: ${{ matrix.java-version }}
-        distribution: ${{ matrix.jdk-distribution }}
-        java-package: jdk
-    - name: Cache local Maven repository
-      uses: actions/cache@v3
-      with:
-        path: .m2
-        enableCrossOsArchive: true
-        key: maven-windup-maven-plugin-build-${{ github.sha }}
-        restore-keys: |
-          maven-windup-rulesets-build-${{ github.sha }}
-    - name: Maven build
-      run: mvn clean install -B -D"maven.repo.local=.m2"
-
-  windup-maven-plugin-build-tmp:
     strategy:
       fail-fast: false
       matrix:
