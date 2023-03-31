@@ -9,10 +9,12 @@ import org.apache.maven.plugin.testing.AbstractMojoTestCase;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.ProjectBuilder;
 import org.apache.maven.project.ProjectBuildingRequest;
+import org.codehaus.plexus.util.xml.Xpp3Dom;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Paths;
 import java.util.Properties;
 
 public class WindupMojoTest extends AbstractMojoTestCase
@@ -62,6 +64,12 @@ public class WindupMojoTest extends AbstractMojoTestCase
 
 
         assertEquals(mojo.getWindupVersion(), versions.getProperty("version.windup"));
+        assertTrue("index.html report not found",
+                Paths.get("",
+                                ((Xpp3Dom) project.getBuild().getPlugins().get(0).getConfiguration()).getChild("outputDirectory").getValue(),
+                                "index.html")
+                        .toFile()
+                        .exists());
     }
 
     public void testWindupVersionParameterPresent() throws Exception
@@ -86,5 +94,11 @@ public class WindupMojoTest extends AbstractMojoTestCase
 
 
         assertEquals(mojo2.getWindupVersion(), "6.2.0-SNAPSHOT");
+        assertTrue("index.html report not found",
+                Paths.get("",
+                                ((Xpp3Dom) project.getBuild().getPlugins().get(0).getConfiguration()).getChild("outputDirectory").getValue(),
+                                "index.html")
+                        .toFile()
+                        .exists());
     }
 }

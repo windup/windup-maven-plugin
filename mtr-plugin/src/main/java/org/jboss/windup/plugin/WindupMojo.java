@@ -327,6 +327,7 @@ public class WindupMojo extends AbstractMojo
         install("org.jboss.forge.addon:core," + forgeVersion, furnace);
         install("org.jboss.windup:windup-tooling," + this.windupVersion, furnace);
         install("org.jboss.windup.rules.apps:windup-rules-java-project," + this.windupVersion, furnace);
+        install("org.jboss.windup.reporting:windup-reporting-data," + this.windupVersion, furnace);
 
         if(this.enableTattletale == Boolean.TRUE)
             install("org.jboss.windup.rules.apps:windup-rules-tattletale," + this.windupVersion, furnace);
