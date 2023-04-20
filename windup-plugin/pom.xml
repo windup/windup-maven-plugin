@@ -4,7 +4,7 @@
     <parent>
         <groupId>org.jboss.windup.plugin</groupId>
         <artifactId>windup-maven-plugin-parent</artifactId>
-        <version>6.1.9-SNAPSHOT</version>
+        <version>6.1.9.Final</version>
     </parent>
 
     <artifactId>windup-maven-plugin</artifactId>
