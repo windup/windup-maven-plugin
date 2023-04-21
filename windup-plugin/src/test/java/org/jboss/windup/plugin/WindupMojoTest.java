@@ -45,7 +45,7 @@ public class WindupMojoTest extends AbstractMojoTestCase
     public void testNoWindupVersionParameter() throws Exception
     {
         File testPom = new File( getBasedir(),
-                "src/test/resources/mojoTestConfig.xml" );
+                "src/test/resources/mojoTestConfig/pom.xml" );
         assertNotNull(testPom);
 
         MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
@@ -75,7 +75,7 @@ public class WindupMojoTest extends AbstractMojoTestCase
     public void testWindupVersionParameterPresent() throws Exception
     {
         File testPom = new File( getBasedir(),
-                "src/test/resources/mojoTestConfigWithWindupVersion.xml" );
+                "src/test/resources/mojoTestConfigWithWindupVersion/pom.xml" );
         assertNotNull(testPom);
 
         MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
