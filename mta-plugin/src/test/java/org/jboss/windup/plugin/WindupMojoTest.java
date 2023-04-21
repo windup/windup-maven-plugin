@@ -46,7 +46,16 @@ public class WindupMojoTest extends AbstractMojoTestCase
                 "src/test/resources/mojoTestConfig.xml" );
         assertNotNull(testPom);
 
-        WindupMojo mojo = (WindupMojo)lookupMojo("windup", testPom);
+        MavenExecutionRequest executionRequest = new DefaultMavenExecutionRequest();
+        MavenExecutionRequestPopulator populator = getContainer().lookup( MavenExecutionRequestPopulator.class );
+        populator.populateDefaults(executionRequest);
+        executionRequest.setSystemProperties(System.getProperties());
+
+        ProjectBuildingRequest buildingRequest = executionRequest.getProjectBuildingRequest();
+        ProjectBuilder projectBuilder = this.lookup(ProjectBuilder.class);
+        MavenProject project = projectBuilder.build(testPom, buildingRequest).getProject();
+
+        WindupMojo mojo = (WindupMojo) lookupConfiguredMojo(project, "windup");
         assertNotNull( mojo );
         assertNull(mojo.getWindupVersion());
         mojo.execute();
