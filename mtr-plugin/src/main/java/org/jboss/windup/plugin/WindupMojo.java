@@ -54,6 +54,7 @@ import org.jboss.forge.furnace.versions.Version;
 import org.jboss.forge.furnace.versions.Versions;
 import org.jboss.windup.config.AnalyzeKnownLibrariesOption;
 import org.jboss.windup.config.KeepWorkDirsOption;
+import org.jboss.windup.exec.Util;
 import org.jboss.windup.exec.WindupProcessor;
 import org.jboss.windup.exec.configuration.WindupConfiguration;
 import org.jboss.windup.exec.configuration.options.ExcludeTagsOption;
@@ -356,6 +357,9 @@ public class WindupMojo extends AbstractMojo
         }
         catch (IOException e) {
             e.printStackTrace();
+        }
+        finally {
+            Util.deleteGraphDataUnlessInhibited(windupConfiguration, graphPath);
         }
     }
 
