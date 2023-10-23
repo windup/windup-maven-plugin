@@ -93,7 +93,7 @@ public class WindupMojoTest extends AbstractMojoTestCase
         mojo2.execute();
 
 
-        assertEquals(mojo2.getWindupVersion(), "6.3.3.Final");
+        assertEquals(mojo2.getWindupVersion(), "6.3.4-SNAPSHOT");
         assertTrue("index.html report not found",
                 Paths.get("",
                                 ((Xpp3Dom) project.getBuild().getPlugins().get(0).getConfiguration()).getChild("outputDirectory").getValue(),
