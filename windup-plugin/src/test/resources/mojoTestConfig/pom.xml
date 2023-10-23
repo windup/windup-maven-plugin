@@ -5,14 +5,14 @@
 
     <groupId>org.jboss.windup.plugin.it</groupId>
     <artifactId>simple-it</artifactId>
-    <version>6.3.3-SNAPSHOT</version>
+    <version>6.3.3.Final</version>
 
     <build>
         <plugins>
             <plugin>
                 <groupId>org.jboss.windup.plugin</groupId>
                 <artifactId>windup-maven-plugin</artifactId>
-                <version>6.3.3-SNAPSHOT</version>
+                <version>6.3.3.Final</version>
                 <executions>
                     <execution>
                         <id>run-windup</id>
